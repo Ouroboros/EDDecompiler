@@ -1,0 +1,27 @@
+﻿from FieldAttackChr import *
+
+def main():
+    #CreateFieldAttack("fachr176._bn", "chr/ch04258.itc", "cr035301")
+    CreateFieldAttack("fachr176._bn", "chr/ch04258.itc", "sysatk07")
+    SetChrSubChip(0)
+    Sleep(120)
+    SetChrSubChip(1)
+    Sleep(90)
+    Voice(3867, 3866, 3876, 0)
+    Sound(248)
+    BlurSwitch(0x0, 10)
+    FA_0B(500)
+    PlayEffect(0x0, 1000, 0, 0, 0, 0, 0x0)
+    SetChrSubChip(2)
+    Sleep(120)
+    SetChrSubChip(3)
+    Sleep(120)
+    SetChrSubChip(4)
+    Sleep(120)
+    SetChrSubChip(5)
+    Sleep(120)
+    SetChrSubChip(6)
+    Sleep(250)
+    Return()
+
+TryInvoke(main)
