@@ -832,7 +832,7 @@ def SaveToMS(filename, local):
     ms.SupportCraft         = local['SupportCraftAIList']
     ms.CraftInfo            = local['CraftList']
 
-    if not isinstance(ms.Attack, BattleCraftAIInfo):    raise Exception('incorrect Attack type')
+    if not isinstance(ms.Attack, BattleCraftAIInfo):    raise Exception(' incorrect Attack type')
     if not isinstance(ms.Arts, list):                   raise Exception(' ArtsAIList must be list')
     if not isinstance(ms.Craft, list):                  raise Exception(' CraftAIList must be list')
     if not isinstance(ms.SCraft, list):                 raise Exception(' SCraftAIList must be list')
