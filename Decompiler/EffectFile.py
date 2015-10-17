@@ -29,7 +29,11 @@ class EffCoord(Structure):
     ]
 
     def serialize(self):
-        return {'@X': str(self.X), '@Y': str(self.Y), '@Z': str(self.Z)}
+        return OrderedDict([
+            ('@X', str(self.X)),
+            ('@Y', str(self.Y)),
+            ('@Z', str(self.Z)),
+        ])
 
     def unserialize(self, data):
         self.X = FLOAT(float(data['@X']))
@@ -138,6 +142,15 @@ class EDAOPartDataExtra(Structure):
 def bytesToString(b):
     return bytes(b).split(b'\x00', 1)[0].decode(CODE_PAGE)
 
+def stringToBytes(s, typ):
+    return typ.from_buffer_copy((s or '').encode(CODE_PAGE).ljust(ctypes.sizeof(typ), b'\x00'))
+
+def stringToInt(s):
+    return int(s, s.lower().startswith('0x') and 16 or 10)
+
+def stringToFloat(s):
+    return float(s) if s.lower() != 'nan' else struct.unpack('f', b'\xff\xff\xff\xff')[0]
+
 def serializeStructure(obj):
     if hasattr(obj, 'serialize'):
         return obj.serialize()
@@ -167,8 +180,6 @@ def serializeStructure(obj):
 
     return p
 
-
-
 def unserializeStructure(obj, data):
     if hasattr(obj, 'unserialize'):
         obj.unserialize(data)
@@ -184,22 +195,28 @@ def unserializeStructure(obj, data):
 
         elif not isinstance(value, ctypes.Array):
             if typ is FLOAT:
-                value = float(data[name])
+                value = stringToFloat(data[name])
             else:
                 i = data[name]
-                value = int(i, i.lower().startswith('0x') and 16 or 10)
+                value = stringToInt(i)
 
             setattr(obj, name, typ(value))
 
         else:
             if typ in (MagicByteArray, NameByteArray):
-                value = (data[name] or '').encode(CODE_PAGE).ljust(ctypes.sizeof(typ), b'\x00')
-                setattr(obj, name, typ.from_buffer_copy(value))
+                setattr(obj, name, stringToBytes(data[name], typ))
 
             elif isinstance(value[0], NameByteArray):
                 names = data[name]
                 for i in range(min(len(value), len(names))):
-                    value[i] = NameByteArray.from_buffer_copy((names[i] or '').encode(CODE_PAGE).ljust(ctypes.sizeof(NameByteArray), b'\x00'))
+                    value[i] = stringToBytes(names[i], NameByteArray)
+
+            else:
+                values = data[name].split(',')
+                typ = type(value[0])
+                for i, v in enumerate(values):
+                    v = v.strip()
+                    value[i] = stringToFloat(v) if typ is float else stringToInt(v)
 
 def generateEff(xml):
     eff = EDAOEffectFile()
@@ -270,7 +287,7 @@ class EDAOEffectFile:
         xml.insert(0, "xml = '''\\")
         xml.append("'''")
 
-        module = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+        module = os.path.splitext(os.path.basename(__file__))[0]
         xml.extend([
             '',
             'def main():',
@@ -287,7 +304,7 @@ class EDAOEffectFile:
     def loadAndSave(self, xml):
         xml = xmltodict.parse(xml)
         root = xml['eff']
-        efffile = root['FileName']
+        self.name = root['FileName']
         parts = root['parts']['part']
 
         unserializeStructure(self.header, root['header'])
@@ -299,8 +316,30 @@ class EDAOEffectFile:
             self.partData[i] = part
             unserializeStructure(part, parts[i])
 
-        self.saveTo('test.xml')
-        PauseConsole()
+            try:
+                extra = parts[i]['extraData']['extra']
+            except KeyError:
+                continue
+
+            if not isinstance(extra, (list, tuple)):
+                extra = [extra]
+
+            part.Header.ExtraCount = len(extra)
+            for i in range(len(extra)):
+                e = EDAOPartDataExtra()
+                unserializeStructure(e, extra[i])
+                part.extra.append(e)
+
+        fs = FileStream('test.eff', 'wb')
+        fs.Write(bytes(self.header))
+
+        for part in self.partData:
+            if not part:
+                continue
+
+            fs.Write(bytes(part))
+            for e in part.extra:
+                fs.Write(bytes(e))
 
 def procfile(file):
     print('processing %s' % file)
@@ -309,5 +348,5 @@ def procfile(file):
     ms.saveTo(file + '.py')
 
 if __name__ == '__main__':
-    sys.argv.append('jd000002.eff')
+    sys.argv.append(r"D:\Game\Falcom\ED_AO\patch\effect\eff\sysatk07.eff")
     TryForEachFileMP(sys.argv[1:], procfile, '*.eff')
