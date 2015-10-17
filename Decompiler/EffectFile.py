@@ -188,8 +188,6 @@ def unserializeStructure(obj, data):
     for name, typ in obj._fields_:
         value = getattr(obj, name)
 
-        print(name)
-
         if isinstance(value, Structure):
             unserializeStructure(value, data[name])
 
@@ -330,7 +328,7 @@ class EDAOEffectFile:
                 unserializeStructure(e, extra[i])
                 part.extra.append(e)
 
-        fs = FileStream('test.eff', 'wb')
+        fs = FileStream(os.path.join(os.path.dirname(sys.argv[0]), self.name), 'wb')
         fs.Write(bytes(self.header))
 
         for part in self.partData:
@@ -348,5 +346,5 @@ def procfile(file):
     ms.saveTo(file + '.py')
 
 if __name__ == '__main__':
-    sys.argv.append(r"D:\Game\Falcom\ED_AO\patch\effect\eff\sysatk07.eff")
+    # sys.argv.append(r"D:\Game\Falcom\ED_AO\patch\effect\eff\sysatk07.eff")
     TryForEachFileMP(sys.argv[1:], procfile, '*.eff')
