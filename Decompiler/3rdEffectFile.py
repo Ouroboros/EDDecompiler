@@ -7,19 +7,13 @@ partDataCount = 16
 NameByteArray = BYTE * 16
 MagicByteArray = BYTE * 4
 
-class EDAOEffFileHeader(Structure):
+class ED63EffFileHeader(Structure):
     _fields_ = [
-        ('Magic',           MagicByteArray),    #  0x0000
-        ('Name',            NameByteArray),     #  0x0004
-        ('Unknown',         USHORT),            #  0x0014
-        ('Padding',         USHORT),            #  0x0016
-        ('Flags',           USHORT),            #  0x0018
-        ('PartDataBits',    USHORT),            #  0x001A
-        ('Texture',         NameByteArray * 4), #  0x001C
-        ('Children',        NameByteArray * 2), #  0x005C
+        ('Texture',         NameByteArray * 4), #  0x0000
+        ('Children',        NameByteArray),     #  0x0040
+        ('TexturePtr',      PVOID * 4),         #  0x0050
     ]
-    # PartData        [16][]EDAOPartData  #  0x007C
-
+    # PartData              PartData[]          #  0x0060
 
 class EffCoord(Structure):
     _fields_ = [
@@ -51,16 +45,16 @@ class PartDataFlags:
     Culling1        = 0x00000800
     Culling2        = 0x00008000
 
-class EDAOPartData(Structure):                  # 0x03B8 bytes
+class ED63PartData(Structure):                  # 0x03F4 bytes
     class _Header(Structure):                   # 0x0050 bytes
         _fields_ = [
             ('Name',            NameByteArray), # 0x0000
-            ('Index',           BYTE),          # 0x0010
+            ('Byte_10',         BYTE),          # 0x0010
             ('Byte_11',         BYTE),          # 0x0011
             ('ExtraCount',      BYTE),          # 0x0012
             ('Byte_13',         BYTE),          # 0x0013
             ('Flags',           ULONG),         # 0x0014
-            ('Flags2',          ULONG),         # 0x0018
+            ('Uint_18',         ULONG),         # 0x0018
             ('Float_1C',        FLOAT),         # 0x001C
             ('Byte_1C',         BYTE * 0x1C),   # 0x0020
             ('Byte_3C',         BYTE),          # 0x003C
@@ -90,7 +84,7 @@ class EDAOPartData(Structure):                  # 0x03B8 bytes
         ('Coord_5C',            EffCoord),      # 0x005C
         ('Float_68',            FLOAT),         # 0x0068
         ('Float_6C',            FLOAT),         # 0x006C
-        ('TexturePrecision',    FLOAT),         # 0x0070
+        ('Float_70',            FLOAT),         # 0x0070
         ('Float_74',            FLOAT),         # 0x0074
         ('Uint_78',             ULONG),         # 0x0078
         ('Float_7C',            FLOAT),         # 0x007C
@@ -99,7 +93,7 @@ class EDAOPartData(Structure):                  # 0x03B8 bytes
         ('Float_88',            FLOAT),         # 0x0088
         ('Float_8C',            FLOAT),         # 0x008C
         ('Float_90',            FLOAT),         # 0x0090
-        ('HitDistance',         FLOAT),         # 0x0094
+        ('Float_94',            FLOAT),         # 0x0094
         ('Float_98',            FLOAT),         # 0x0098
         ('Uint_9C',             ULONG),         # 0x009C
         ('Uint_A0',             ULONG),         # 0x00A0
@@ -110,7 +104,7 @@ class EDAOPartData(Structure):                  # 0x03B8 bytes
         ('Ushort_CA',           USHORT),        # 0x00CA
         ('Ushort_CC',           USHORT),        # 0x00CC
         ('Ushort_CE',           USHORT),        # 0x00CE
-        ('Sound',               USHORT),        # 0x00D0
+        ('Ushort_D0',           USHORT),        # 0x00D0
         ('Ushort_D2',           USHORT),        # 0x00D2
         ('Uint_D4',             ULONG),         # 0x00D4
         ('Uint_D8',             ULONG),         # 0x00D8
@@ -123,22 +117,22 @@ class EDAOPartData(Structure):                  # 0x03B8 bytes
         ('Options',             BYTE * 8),      # 0x039C
         ('Struct_3A4',          _Struct_3A4),   # 0x039C
 
-        # EDAOPartDataExtra[Header.ExtraCount]
+        # ED63PartDataExtra[Header.ExtraCount]
     ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.extra = []     # EDAOPartDataExtra
+        self.extra = []     # ED63PartDataExtra
 
-class EDAOPartDataExtra(Structure):
+class ED63PartDataExtra(Structure):
     _fields_ = [
         ('Byte_00',     BYTE),
-        ('PartIndex',   BYTE),
-        ('Repeat',      BYTE),
-        ('SpiritCount', BYTE),
+        ('Byte_01',     BYTE),
+        ('Byte_02',     BYTE),
+        ('Byte_03',     BYTE),
         ('Uint_04',     ULONG),
-        ('StartTime',   FLOAT),
-        ('Interval',    EffCoord),
+        ('Uint_08',     ULONG),
+        ('Coord_0C',    EffCoord),
     ]
 
 def bytesToString(b):
@@ -148,7 +142,6 @@ def stringToBytes(s, typ):
     return typ.from_buffer_copy((s or '').encode(CODE_PAGE).ljust(ctypes.sizeof(typ), b'\x00'))
 
 def stringToInt(s):
-    return eval(s)
     return int(s, s.lower().startswith('0x') and 16 or 10)
 
 def stringToFloat(s):
@@ -220,12 +213,12 @@ def unserializeStructure(obj, data):
                     value[i] = stringToFloat(v) if typ is float else stringToInt(v)
 
 def generateEff(xml):
-    eff = EDAOEffectFile()
+    eff = ED63EffectFile()
     eff.loadAndSave(xml)
 
-class EDAOEffectFile:
+class ED63EffectFile:
     def __init__(self):
-        self.header = EDAOEffFileHeader()
+        self.header = ED63EffFileHeader()
         self.partData = [None for _ in range(partDataCount)]
         self.name = ''
 
@@ -247,18 +240,18 @@ class EDAOEffectFile:
 
     def open(self, efffile):
         fs = FileStream(efffile)
-        self.header = EDAOEffFileHeader(fs)
+        self.header = ED63EffFileHeader(fs)
         self.name = os.path.basename(efffile)
 
         for i in range(partDataCount):
             if ((1 << i) & self.partDataBits) == 0:
                 continue
 
-            part = EDAOPartData(fs)
+            part = ED63PartData(fs)
             self.partData[i] = part
 
             for i in range(part.Header.ExtraCount):
-                part.extra.append(EDAOPartDataExtra(fs))
+                part.extra.append(ED63PartDataExtra(fs))
 
     def saveTo(self, fileName):
         xml    = OrderedDict()
@@ -272,7 +265,7 @@ class EDAOEffectFile:
 
         for index, part in enumerate(self.partData):
             if not part:
-                parts.append({'@index': '%X' % index})
+                parts.append({'@index': str(index)})
                 continue
 
             p = serializeStructure(part)
@@ -281,12 +274,7 @@ class EDAOEffectFile:
                     'extra': [serializeStructure(e) for e in part.extra],
                 }
 
-                for e in p['extraData']['extra']:
-                    part = self.partData[int(e['PartIndex'], 16)]
-                    if part:
-                        e['@name'] = bytesToString(part.Header.Name)
-
-            p['@index'] = '%X' % index
+            p['@index'] = str(index)
             parts.append(p)
 
         xml = xmltodict.unparse(xml, pretty = True, indent = '  ').splitlines()
@@ -318,15 +306,13 @@ class EDAOEffectFile:
             if ((1 << i) & self.partDataBits) == 0:
                 continue
 
-            part = EDAOPartData()
+            part = ED63PartData()
             self.partData[i] = part
             unserializeStructure(part, parts[i])
 
-
             try:
                 extra = parts[i]['extraData']['extra']
-            except (KeyError, TypeError):
-                part.Header.ExtraCount = 0
+            except KeyError:
                 continue
 
             if not isinstance(extra, (list, tuple)):
@@ -334,7 +320,7 @@ class EDAOEffectFile:
 
             part.Header.ExtraCount = len(extra)
             for i in range(len(extra)):
-                e = EDAOPartDataExtra()
+                e = ED63PartDataExtra()
                 unserializeStructure(e, extra[i])
                 part.extra.append(e)
 
@@ -351,9 +337,9 @@ class EDAOEffectFile:
 
 def procfile(file):
     print('processing %s' % file)
-    ms = EDAOEffectFile()
+    ms = ED63EffectFile()
     ms.open(file)
     ms.saveTo(file + '.py')
 
 if __name__ == '__main__':
-    TryForEachFile(sys.argv[1:], procfile, '*.eff')
+    TryForEachFileMP(sys.argv[1:], procfile, '*.eff')
