@@ -1,5 +1,7 @@
 ﻿from BattleMonsterStatus import *
 
+# 敌人
+
 def main():
     Name               = "阿瑞安赫德"
     Description        = "结社『使徒』的第七柱，\\n使用超越人类认知的枪\\n技和S级的幸运，\\n可将任何敌人完全压制。"

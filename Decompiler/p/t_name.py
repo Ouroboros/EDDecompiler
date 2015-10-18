@@ -57,6 +57,7 @@ AddChar(0x035C, "莉夏", "chr/ch03200.itc", "chr/ch03201.itc", 0, 0x00000000)
 
 AddChar(0x00B0, "阿瑞安赫德", "chr/ch04200.itc", "chr/ch04200.itc", "ms90010.dat", 0x00000000)
 AddChar(0x00B1, "小丑肯帕雷拉", "chr/ch03650.itc", "chr/ch03650.itc", "ms90020.dat", 0x00000000)
+AddChar(0x00F0, "钢盔肾斗士", "chr/ch03670.itc", "chr/ch03670.itc", "ms04670.dat", 0x00000000)
 
 AddChar(0x00C0, "血腥谢莉", "chr/ch03400.itc", "chr/ch03400.itc", "ms03401.dat", 0x00000000)
 AddChar(0x00C1, "战鬼西格蒙德", "chr/ch03300.itc", "chr/ch03300.itc", "ms03301.dat", 0x00000000)

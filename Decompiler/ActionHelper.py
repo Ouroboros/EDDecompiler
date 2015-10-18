@@ -1,5 +1,5 @@
 from BattleActionScript import *
-#import random
+import random
 import uuid
 
 def GenerateUniqueLable():

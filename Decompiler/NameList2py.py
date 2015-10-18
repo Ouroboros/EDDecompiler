@@ -104,5 +104,6 @@ def main(filename):
 
     open(os.path.splitext(filename)[0] + '.py', 'wb').write('\r\n'.join(lines).encode('utf_8_sig'))
 
-for i in sys.argv[1:]:
-    TryInvoke(main, i)
+if __name__ == '__main__':
+    for i in sys.argv[1:]:
+        TryInvoke(main, i)

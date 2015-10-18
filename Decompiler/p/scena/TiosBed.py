@@ -44,6 +44,7 @@ StaticGodList = \
 (
     CharInfo(0xB0, '阿瑞安赫德',     SetArianrhodChip),
     CharInfo(0xB1, '小丑肯帕雷拉'),
+    CharInfo(0xF0, '钢盔肾斗士'),
 
     CharInfo(0xC0, '血腥谢莉'),
     CharInfo(0xC1, '战鬼西格蒙德'),
