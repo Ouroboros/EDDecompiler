@@ -349,13 +349,17 @@ def ShowMenu():
 
     Jc((scpexpr(EXPR_GET_RESULT, 0x0), scpexpr(EXPR_PUSH_LONG, 0xFF), scpexpr(EXPR_NEQ), scpexpr(EXPR_END)), "menu_return")
 
+    if 1:
+        SetScenarioFlags(SCENA_FLAGS_OFFSET_1, SCENA_FLAGS_BIT_ARIANRHOD)
+        SetScenarioFlags(0x20, 2)
+
     IfScenaFlagOff(SCENA_FLAGS_OFFSET_1, SCENA_FLAGS_BIT_ARIANRHOD, 'hagane_already_clear')
 
     AnonymousTalk(
         999,
         (
             scpstr(7, 5),
-            "\x01挑战钢之圣女成功前只能使用原始的第七柱。\x07\x00\x02",
+            "\x01你还没有领悟宇宙的真理。\x07\x00\x02",
         )
     )
 
@@ -397,11 +401,6 @@ def ShowMenu():
 
     label("rest_here")
     OP_32(0xFF, 0xFF, 0)
-
-    if False:
-        SetScenarioFlags(SCENA_FLAGS_OFFSET_1, SCENA_FLAGS_BIT_ARIANRHOD)
-        SetScenarioFlags(0x20, 2)
-        CloseMessageWindow()
 
     #ShowSaveClearMenu()
     #OP_C5(0x2B, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0)

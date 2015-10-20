@@ -854,5 +854,4 @@ def procfile(file):
     ms.SaveTo(os.path.splitext(file)[0] + '.py')
 
 if __name__ == '__main__':
-
     TryForEachFileMP(sys.argv[1:], procfile, 'ms*.dat')

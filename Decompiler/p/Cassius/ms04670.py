@@ -2,8 +2,8 @@
 
 def main():
     Name               = "钢盔肾斗士"
-    Description        = "结社八十八个『肾斗士』的第一位，\\n擅长使棍子的剑圣。"
-    ASFile             = "as90010.dat"
+    Description        = "结社八十八个『肾斗士』\\n的第一位，擅长使棍子的\\n剑圣。"
+    ASFile             = "as04670.dat"
     Symbol             = "sy04670.itp"
 
     Resistance = CraftConditionFlags.Poison         | \
@@ -33,13 +33,13 @@ def main():
 
     Level              = 120
     MaximumHP          = 59000
-    InitialHP          = 59000
+    InitialHP          = 9000
     MaximumEP          = 9000
     InitialEP          = 9000
     MaximumCP          = 200
     InitialCP          = 0
 
-    SPD                = 120
+    SPD                = 12
     MoveSPD            = 10
     MOV                = 6
     STR                = 3450
@@ -48,7 +48,7 @@ def main():
     ADF                = 2391
     DEX                = 150
     AGL                = 32
-    RNG                = 2
+    RNG                = 1
 
     Unknown_2A         = 0x0
     EXP                = 1024
@@ -101,33 +101,18 @@ def main():
                     0, 0,
                )
 
-    神速 = CreateCraft(
-                    "神速",
-                    "",
-                    0x05, 0x12, 0x1,
+    百烈击 = CreateCraft(
+                    "百烈击",
+                    "百龙霸",
+                    0x05, 0x12, 0,
                     CraftAttribute.NoAttribute,
-                    CraftRange.LineOnLocationIncludeSelf,
-                    CraftState.Physical, CraftState.InterruptAria,
-                    1, 50,
-                    0, 5,
-                    0,
-                    3,
-                    30, 0,
-                    0, 0,
-               )
-
-    朗基努斯枪 = CreateCraft(
-                    "朗基努斯枪",
-                    "据说当年第七柱用这招杀了一个人。",
-                    0x05, 0x12, 0x1,
-                    CraftAttribute.NoAttribute,
-                    CraftRange.CircleOnLocation,
+                    CraftRange.Target,
                     CraftState.Physical, CraftState.NoneState,
-                    50, 10,
-                    0, 30,
+                    3, 1,
+                    0, 0,
                     0,
-                    5,
-                    100, 0,
+                    2,
+                    150, 0,
                     0, 0,
                )
 
@@ -269,41 +254,31 @@ def main():
 
     CraftList = CreateCraftList([
                     Craft_03E8,
-                    朗基努斯枪,
-                    天地乖离,
-                    疾风轰雷闪,
-                    大地轰雷锤,
-                    横扫千军,
-                    圣技大十字,
-                    摘面具,
-                    暴雨疾风枪,
-                    零时迷子,
-                    神速,
-                    #幻银方舟炮,
+                    百烈击,
                 ])
 
     Attack = CreateAI(0x1, 0,   0x0, 0x1, 0x00, 0x05, Craft_03E8,         [0,     0,      1,      0])
 
-    Craft_暴雨疾风枪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x15, 暴雨疾风枪,      [0,     0,      0,      0])
-    Craft_摘面具         = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x13, 摘面具,          [70,    255,    0,      0])
-    Craft_朗基努斯枪     = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x17, 朗基努斯枪,      [30,    1,      0,      0])
-    Craft_疾风轰雷闪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x10, 疾风轰雷闪,      [0,     0,      1,      0])
-    Craft_横扫千军       = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x12, 横扫千军,        [0,     0,      1,      0])
-    Craft_天地乖离       = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x18, 天地乖离,        [30,    1,      0,      0])
-    Craft_大地轰雷锤     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x11, 大地轰雷锤,      [0,     0,      1,      0])
-    Craft_零时迷子       = CreateAI(0xB,  100,  0x12, 0x1,  0x00, 0x14, 零时迷子,        [0,     0,      0,      0])
-    Craft_神速           = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x19, 神速,            [0,     0,      1,      0])
+    Craft_百烈击         = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x10, 百烈击,         [30,    1,      0,      0])
+    # Craft_暴雨疾风枪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x15, 暴雨疾风枪,      [0,     0,      0,      0])
+    # Craft_摘面具         = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x13, 摘面具,         [70,    255,    0,      0])
+    # Craft_疾风轰雷闪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x10, 疾风轰雷闪,      [0,     0,      1,      0])
+    # Craft_横扫千军       = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x12, 横扫千军,        [0,     0,      1,      0])
+    # Craft_天地乖离       = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x18, 天地乖离,        [30,    1,      0,      0])
+    # Craft_大地轰雷锤     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x11, 大地轰雷锤,      [0,     0,      1,      0])
+    # Craft_零时迷子       = CreateAI(0xB,  100,  0x12, 0x1,  0x00, 0x14, 零时迷子,        [0,     0,      0,      0])
+    # Craft_神速           = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x19, 神速,            [0,     0,      1,      0])
 
     #Craft_幻银方舟炮       = CreateAI(0xB,  100,  0x12, 0x1,  6, 7, 幻银方舟炮,        [0,     0,      0,      0])
 
-    SCraft_圣技大十字    = CreateAI(0xA, 100, 0x0, 0x1, 0x00, 0x1A, 圣技大十字,         [100,   0,      0,      0])
+    # SCraft_圣技大十字    = CreateAI(0xA, 100, 0x0, 0x1, 0x00, 0x1A, 圣技大十字,         [100,   0,      0,      0])
 
 
     ArtsAIList          = []
-    CraftAIList         = [Craft_暴雨疾风枪, Craft_摘面具, Craft_神速, Craft_零时迷子, Craft_朗基努斯枪, Craft_疾风轰雷闪, Craft_横扫千军, Craft_天地乖离, Craft_大地轰雷锤]
-    SCraftAIList        = [SCraft_圣技大十字]
+    CraftAIList         = [Craft_百烈击]
+    SCraftAIList        = []
     SupportCraftAIList  = []
 
-    SaveToMS("ms90010.dat", locals())
+    SaveToMS("ms04670.dat", locals())
 
 TryInvoke(main)

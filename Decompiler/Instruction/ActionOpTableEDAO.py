@@ -69,7 +69,7 @@ InstructionNames[0x39] = 'SetCameraDegree'
 InstructionNames[0x3A] = 'AS_3A'
 InstructionNames[0x3B] = 'SetCameraDistance'
 InstructionNames[0x3C] = 'AS_3C'
-InstructionNames[0x3D] = 'AS_3D'
+InstructionNames[0x3D] = 'ShakeScreen'
 InstructionNames[0x3E] = 'AS_3E'
 InstructionNames[0x3F] = 'AS_3F'
 InstructionNames[0x40] = 'AS_40'
@@ -112,7 +112,7 @@ InstructionNames[0x67] = 'AS_67'
 InstructionNames[0x68] = 'AS_68'
 InstructionNames[0x6A] = 'LoadChrChip'
 InstructionNames[0x6B] = 'AS_6B'
-InstructionNames[0x6C] = 'AS_6C'
+InstructionNames[0x6C] = 'Dead'
 InstructionNames[0x6D] = 'AS_6D'
 InstructionNames[0x6E] = 'AS_6E'
 InstructionNames[0x6F] = 'AS_6F'
@@ -480,7 +480,7 @@ edao_as_op_list = \
     inst(AS_3A,                         'WW'),
     inst(SetCameraDistance,             'ih'),          # SetCameraDistance(Distance, MoveToTime)
     inst(AS_3C,                         'WW'),
-    inst(AS_3D,                         'HHHH'),
+    inst(ShakeScreen,                   'HHHH'),
     inst(AS_3E,                         'WW'),
     inst(AS_3F,                         'B'),
     inst(AS_40,                         'B'),
@@ -523,7 +523,7 @@ edao_as_op_list = \
     inst(AS_68,                         'BBL'),
     inst(LoadChrChip,                   NO_OPERAND,             0,                          as_load_chr_chip),
     inst(AS_6B),
-    inst(AS_6C),
+    inst(Dead),
     inst(AS_6D,                         'L'),
     inst(AS_6E,                         'L'),
     inst(AS_6F,                         'BB'),

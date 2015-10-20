@@ -32,3 +32,9 @@ def ForeachTargetEx(func, reset = True):
     Jump(foreach_begin)
 
     label(foreach_end)
+
+def SetCondition(target, buf, rate, time):
+    AS_8D(0x15, target, buf, rate, time)
+
+def ClearCondition(target, buf):
+    AS_8D(0x4B, target, buf, buf != CraftConditionFlags.Vanish and -1 or 0, 0)
