@@ -1,5 +1,6 @@
 ﻿from ActionHelper import *
 from Voice import *
+import SysCraft
 
 def main():
     CreateBattleAction("as04670.dat", ((128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176)))
@@ -31,7 +32,7 @@ def main():
         'stub_craft',                       # 0E 14
         "SysCraft_Counter",                 # 0F 15
         "Craft_百烈击",                      # 10 16
-        EMPTY_ACTION,                       # 11 17
+        "Craft_钢盔回旋踢",                  # 11 17
         EMPTY_ACTION,                       # 12 18
         EMPTY_ACTION,                       # 13 19
         EMPTY_ACTION,                       # 14 20
@@ -64,14 +65,6 @@ def main():
         EMPTY_ACTION,                       # 2D 45
     ))
 
-    import SysCraft
-
-    label('SysCraft_TeamRushInit')
-    Return()
-
-    label('SysCraft_TeamRushAction')
-    Return()
-
     label('Craft_麒麟功')
 
     AS_8D(0x4B, 0xFF, 0x10000, 0xFFFFFFFF, 0x0)
@@ -85,13 +78,15 @@ def main():
     百烈击.main()
     Return()
 
+    label('Craft_钢盔回旋踢')
+    import 钢盔回旋踢
+    钢盔回旋踢.main()
+    Return()
+
     label('stub_craft')
     Return()
 
-
     label("SysCraft_ArtsAria")
-
-    Call('clear_all_debuff')
     SysCraft.artsAria()
     Return()
 
@@ -178,48 +173,10 @@ def main():
     SysCraft.normalAttack()
     Return()
 
-    label("loc_65A")
-
-    SetChrSubChip(0xFF, 0x4)
-    Sleep(50)
-    Yield()
-    SetChrSubChip(0xFF, 0x3)
-    Sleep(50)
-    Yield()
-    SetChrSubChip(0xFF, 0x2)
-    Sleep(50)
-    Yield()
-    Jump("loc_65A")
-
-    label("loc_672")
-
-    ResetTarget()
-
-    #label("loc_673")
-
-    #ForeachTarget("loc_6B2")
-    PlayEffect(0xFF, 0xFE, 0x0, 0x0, 0, 500, 0, 0, 0, 0, 500, 500, 500, 0x3)
-    AS_A7(0xFF, 0x3, 0xFE, 0xFF38, 0x1F4, 0xFF38, 0xC8, 0x3E8, 0xC8, 0x0)
-    DamageAnime(0xFE, 0x0, 0x32)
-    Sleep(100)
-    Yield()
-    #NextTarget()
-    #Jump("loc_673")
-
-    label("loc_6B2")
-
-    Sleep(100)
-    Yield()
-    Jump("loc_672")
-
     # SysCraft_NormalAttack end
 
-
     label("SysCraft_Stun")
-    SetChrChip(0xFF, 5)
-    SetChrSubChip(0xFF, 0)
-    Sleep(100)
-    Yield()
+    SysCraft.stun()
     Return()
 
     # SysCraft_Stun end
@@ -237,83 +194,17 @@ def main():
 
 
     label("SysCraft_Counter")
-    # Jump('Craft_百烈击')
-    # Return()
-
-    attach_chip = 8
-    critical_hit_eff = 1
-    pre_critical_hit_eff = 2
-
-    eff_list = [critical_hit_eff, pre_critical_hit_eff]
-
-    AS_78(1)
-    LoadChrChip(attach_chip, "chr/ch04672.itc", 0xFF)
-    LoadEffect(critical_hit_eff, "battle/cr006402.eff")
-    LoadEffect(pre_critical_hit_eff, "battle/cr006401.eff")
-    AS_78(0)
-
-    ResetTarget()
-    ResetLookingTargetData()
-    LookingTargetAdd(0xFF, "", 0x0)
-    LookingTargetAdd(0xFC, "", 0x0)
-    LookingTarget(100, 20, 30)
-    # BeginChrThread(0xFF, 1, "SysCraft_Move", 0x0)
-    # AS_1E(0xFFFFFFFF)
-    # EndChrThread(0xFF, 1)
-    TurnDirection(0xFF, 0xFE, 0, 0, 0x0)
-    AS_6D(0x200000)
-    AS_89(0xFF)
-    Yield()
-
-    SetChrChip(CraftTarget.Self, attach_chip)
-    SetChrSubChip(CraftTarget.Self, 0x0)
-    Yield()
-
-    PlayEffect(0xFF, 0xFF, pre_critical_hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 2)
-    Sleep(200)
-    Yield()
-
-    SoundEx(183, 0)
-    BeginChrThread(CraftTarget.Self, 1, "shake_self", 0x0)
-    Sleep(0xA)
-    Yield()
-    Sleep(0x1F4)
-    Yield()
-    Voice(0, 卡西乌斯_百烈击2, 卡西乌斯_攻击5, 卡西乌斯_攻击7, 0, 0xFE)
-
-    for i in range(1, 7):
-        SetChrSubChip(CraftTarget.Self, i)
-        Sleep(0x32)
-        Yield()
-
-    Knockback(8)
-    DamageAnime(CraftTarget.TargetChr, 1, 0x32)
-    DamageCue(0xFE)
-    SetCondition(CraftTarget.TargetChr, CraftConditionFlags.Stun, 50, 1)
-    SoundEx(卡西乌斯_音效_百烈击_结尾, 0)
-    PlayEffect(0xFF, 0xFF, critical_hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 3)
-
-    SetChrSubChip(CraftTarget.Self, 0x7)
-    Sleep(0x32)
-    Yield()
-
-    SetChrSubChip(CraftTarget.Self, 0x8)
-    Sleep(0x5DC)
-    Yield()
-
-    for i in range(9, 12):
-        SetChrSubChip(CraftTarget.Self, i)
-        Sleep(0x32)
-        Yield()
-
-    AS_14(0x2)
-
-    for eff in eff_list:
-        FreeEffect(eff)
-
+    SysCraft.counter()
     Return()
 
     # SysCraft_Counter end
+
+
+    label('SysCraft_TeamRushInit')
+    Return()
+
+    label('SysCraft_TeamRushAction')
+    Return()
 
     SaveToFile()
 

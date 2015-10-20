@@ -426,7 +426,7 @@ edao_as_op_list = \
     inst(Jump,                          'o',                    INSTRUCTION_JUMP),
     inst(SetChrSubChip,                 'BB'),
     inst(AS_03,                         'BW'),
-    inst(AS_04,                         'BBW'),
+    inst(AS_04,                         'BBh'),
     inst(AS_05,                         'BBL'),
     inst(Sleep,                         'H'),
     inst(Yield),

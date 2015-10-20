@@ -24,7 +24,7 @@ def old():
     Return()
 
 def main():
-    CreateFieldAttack("fachr176._bn", "chr/ch04257.itc", "sysatkka")
+    CreateFieldAttack("fachr176._bn", "chr/ch04257.itc", "sysatk77")
     SetChrSubChip(0)
     Voice(3876, 3866, 3867, 0)
     Sleep(100)

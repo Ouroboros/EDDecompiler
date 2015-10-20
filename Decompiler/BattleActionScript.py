@@ -387,7 +387,7 @@ def label(labelname):
 
     plog('%08X: %s' % (pos, labelname))
     if labelname in actionfile.Labels and actionfile.Labels[labelname] != pos:
-        raise Exception('label name conflict')
+        raise Exception('label name conflict: %s' % labelname)
 
     actionfile.Labels[labelname] = pos
 

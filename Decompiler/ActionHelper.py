@@ -38,3 +38,13 @@ def SetCondition(target, buf, rate, time):
 
 def ClearCondition(target, buf):
     AS_8D(0x4B, target, buf, buf != CraftConditionFlags.Vanish and -1 or 0, 0)
+
+class _ResourceLock:
+    def __enter__(self):
+        AS_78(1)
+
+    def __exit__(self, *exc_info):
+        AS_78(0)
+
+ResourceLock = _ResourceLock()
+del _ResourceLock

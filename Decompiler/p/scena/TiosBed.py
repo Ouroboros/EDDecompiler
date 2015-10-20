@@ -349,7 +349,7 @@ def ShowMenu():
 
     Jc((scpexpr(EXPR_GET_RESULT, 0x0), scpexpr(EXPR_PUSH_LONG, 0xFF), scpexpr(EXPR_NEQ), scpexpr(EXPR_END)), "menu_return")
 
-    if 1:
+    if 0:
         SetScenarioFlags(SCENA_FLAGS_OFFSET_1, SCENA_FLAGS_BIT_ARIANRHOD)
         SetScenarioFlags(0x20, 2)
 

@@ -3,20 +3,19 @@ from Voice import *
 
 def main():
     chip = 7
-    attach_chip = 8
+    attack_chip = 8
     hit_eff = 0
     critical_hit_eff = 1
     pre_critical_hit_eff = 2
 
     eff_list = [hit_eff, critical_hit_eff, pre_critical_hit_eff]
 
-    AS_78(1)
-    LoadChrChip(chip, "chr/ch04678.itc", 0xFF)
-    LoadChrChip(attach_chip, "chr/ch04672.itc", 0xFF)
-    LoadEffect(hit_eff, "battle/ms00001.eff")
-    LoadEffect(critical_hit_eff, "battle/cr006402.eff")
-    LoadEffect(pre_critical_hit_eff, "battle/cr006401.eff")
-    AS_78(0)
+    with ResourceLock:
+        LoadChrChip(chip,                   "chr/ch04678.itc", 0xFF)
+        LoadChrChip(attack_chip,            "chr/ch04672.itc", 0xFF)
+        LoadEffect(hit_eff,                 "battle/ms00001.eff")
+        LoadEffect(critical_hit_eff,        "battle/cr006402.eff")
+        LoadEffect(pre_critical_hit_eff,    "battle/cr006401.eff")
 
     ResetTarget()
     ResetLookingTargetData()
@@ -45,7 +44,7 @@ def main():
             PlayEffect(0xFF, 0xFE, hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, -1)
 
     DamageAnime(CraftTarget.TargetChr, 0, 0x32)
-    SetChrChip(CraftTarget.Self, attach_chip)
+    SetChrChip(CraftTarget.Self, attack_chip)
     SetChrSubChip(CraftTarget.Self, 0x0)
     Yield()
 

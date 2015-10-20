@@ -109,25 +109,25 @@ def main():
                     CraftRange.Target,
                     CraftState.Physical, CraftState.NoneState,
                     3, 1,
-                    0, 0,
+                    0, 10,
                     0,
                     2,
-                    150, 0,
+                    120, 0,
                     0, 0,
                )
 
-    天地乖离 = CreateCraft(
-                    "天地乖离",
-                    "用超高速旋转的枪头形成的空间断层将所有敌人送入异次元空间。",
+    钢盔回旋踢 = CreateCraft(
+                    "钢盔回旋踢",
+                    "",
                     0x05, 0x12, 0x1,
                     CraftAttribute.NoAttribute,
-                    CraftRange.LineOnLocation,
+                    CraftRange.CircleOnSelf,
                     CraftState.Physical, CraftState.NoneState,
-                    54, 100,
-                    0, 70,
+                    1, 1,
+                    0, 0,
                     0,
-                    17,
-                    200, 0,
+                    10,
+                    0, 0,
                     0, 0,
                )
 
@@ -255,11 +255,13 @@ def main():
     CraftList = CreateCraftList([
                     Craft_03E8,
                     百烈击,
+                    钢盔回旋踢,
                 ])
 
     Attack = CreateAI(0x1, 0,   0x0, 0x1, 0x00, 0x05, Craft_03E8,         [0,     0,      1,      0])
 
     Craft_百烈击         = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x10, 百烈击,         [30,    1,      0,      0])
+    Craft_钢盔回旋踢     = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x11, 钢盔回旋踢,      [30,    1,      0,      0])
     # Craft_暴雨疾风枪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x15, 暴雨疾风枪,      [0,     0,      0,      0])
     # Craft_摘面具         = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x13, 摘面具,         [70,    255,    0,      0])
     # Craft_疾风轰雷闪     = CreateAI(0x2,  30,   0x7,  0x1,  0x00, 0x10, 疾风轰雷闪,      [0,     0,      1,      0])
@@ -275,7 +277,7 @@ def main():
 
 
     ArtsAIList          = []
-    CraftAIList         = [Craft_百烈击]
+    CraftAIList         = [Craft_钢盔回旋踢, Craft_百烈击]
     SCraftAIList        = []
     SupportCraftAIList  = []
 
