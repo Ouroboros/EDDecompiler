@@ -1,5 +1,4 @@
-from ActionHelper import *
-from Voice import *
+from Cassius import *
 
 arts_aria_eff_id = 0
 
@@ -164,7 +163,7 @@ def useItem():
 
 def normalAttack():
     AS_78(0x1)
-    LoadChrChip(0x7, "chr/ch04672.itc", 0xFF)
+    LoadChrChip(0x7, CHR_Cassius_Attack, 0xFF)
     LoadEffect(0, "battle/ms00001.eff")
     AS_78(0x0)
 
@@ -244,7 +243,7 @@ def counter():
     eff_list = [critical_hit_eff, pre_critical_hit_eff]
 
     with ResourceLock:
-        LoadChrChip(attack_chip, "chr/ch04672.itc", 0xFF)
+        LoadChrChip(attack_chip, CHR_Cassius_Attack, 0xFF)
         LoadEffect(critical_hit_eff, "battle/cr006402.eff")
         LoadEffect(pre_critical_hit_eff, "battle/cr006401.eff")
 

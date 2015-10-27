@@ -44,7 +44,7 @@ InstructionNames[0x1D]  = 'SetBarrier'
 InstructionNames[0x1E]  = 'PlayBGM'
 InstructionNames[0x1F]  = 'OP_1F'
 InstructionNames[0x20]  = 'VolumeBGM'
-InstructionNames[0x21]  = 'OP_21'
+InstructionNames[0x21]  = 'StopBGM'
 InstructionNames[0x22]  = 'WaitBGM'
 InstructionNames[0x23]  = 'Sound'
 InstructionNames[0x24]  = 'OP_24'
@@ -1676,7 +1676,7 @@ edao_op_list = \
     inst(PlayBGM,                   'MC'),
     inst(OP_1F),
     inst(VolumeBGM,                 'BL'),
-    inst(OP_21,                     'L'),
+    inst(StopBGM,                   'L'),
     inst(WaitBGM),
     inst(Sound,                     'HCCC'),
     inst(OP_24,                     'W'),

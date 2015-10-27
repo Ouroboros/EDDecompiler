@@ -338,7 +338,8 @@ class EDAOEffectFile:
                 unserializeStructure(e, extra[i])
                 part.extra.append(e)
 
-        fs = FileStream(os.path.join(os.path.dirname(sys.argv[0]), self.name), 'wb')
+        # fs = FileStream(os.path.join(os.path.dirname(sys.argv[0]), self.name), 'wb')
+        fs = FileStream(self.name, 'wb')
         fs.Write(bytes(self.header))
 
         for part in self.partData:

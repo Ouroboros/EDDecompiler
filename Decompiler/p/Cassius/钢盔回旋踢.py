@@ -1,27 +1,26 @@
-from ActionHelper import *
-from Voice import *
+from Cassius import *
 
 def main():
-    attack_chip     = 7
+    attackChip      = 7
 
-    showup_eff      = 0
-    turn_around_eff = 1
-    kick_eff        = 2
-    hit_eff        = 3
+    showupEff       = 0
+    turnAroundEff   = 1
+    kickEff         = 2
+    hitEff          = 3
 
-    eff_list = [
-        showup_eff,
-        turn_around_eff,
-        kick_eff,
-        hit_eff,
+    effList = [
+        showupEff,
+        turnAroundEff,
+        kickEff,
+        hitEff,
     ]
 
     with ResourceLock:
-        LoadEffect(showup_eff,      "battle/cr007200.eff")
-        LoadEffect(turn_around_eff, "battle/cr007100.eff")
-        LoadEffect(kick_eff,        "battle/cr007400.eff")
-        LoadEffect(hit_eff,         "battle/ms00000.eff")
-        LoadChrChip(attack_chip,    "chr/ch04672.itc", 0xFF)
+        LoadEffect(showupEff,       "battle/cr007200.eff")
+        LoadEffect(turnAroundEff,   "battle/cr007100.eff")
+        LoadEffect(kickEff,         "battle/cr007400.eff")
+        LoadEffect(hitEff,          "battle/ms00000.eff")
+        LoadChrChip(attackChip,     CHR_Cassius_Attack, 0xFF)
 
     # ResetLookingTargetData()
     # LookingTargetAdd(0xFF, "", 0x0)
@@ -30,10 +29,10 @@ def main():
     AS_89(0xFF)
     AS_83(0)
 
-    PlayEffect(0xFF, 0xFF, turn_around_eff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+    PlayEffect(0xFF, 0xFF, turnAroundEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
     SoundEx(卡西乌斯_音效_雷光击_旋转, 0)
     SoundEx(卡西乌斯_音效_雷光击_起跳, 0)
-    SetChrChip(CraftTarget.Self, attack_chip)
+    SetChrChip(CraftTarget.Self, attackChip)
 
     for i in range(4):
         SetChrSubChip(CraftTarget.Self, i)
@@ -69,10 +68,11 @@ def main():
 
     ForeachTarget("回旋踢_next_target_end")
 
-    PlayEffect(0xFF, 0xF9, kick_eff, 0x400, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+    PlayEffect(0xFF, 0xF9, kickEff, 0x400, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
     ChrMove(CraftTarget.Self, CraftTarget.TargetChr, 0, 0, 0, 50, 0)
-    PlayEffect(0xFF, 0xF8, hit_eff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+    PlayEffect(0xFF, 0xF8, hitEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
     AS_8D(0x1F, CraftTarget.Self, 0xF0, 0x0, 0x0)
+    SoundEx(卡西乌斯_音效_雷光击_击中, 0)
     DamageAnime(CraftTarget.TargetChr, 0, 50)
     DamageCue(CraftTarget.TargetChr)
     LockCamera(0xF8, 0, 0, 0, 100)
@@ -92,7 +92,7 @@ def main():
     AS_5F(CraftTarget.Self, 0x0)
     HideChr(CraftTarget.Self, 0)
     ShowChr(CraftTarget.Self, 500)
-    SetChrChip(CraftTarget.Self, attack_chip)
+    SetChrChip(CraftTarget.Self, attackChip)
     SetChrSubChip(CraftTarget.Self, 6)
     Sleep(0)
     Yield()
@@ -103,7 +103,7 @@ def main():
     ChrSetPos(CraftTarget.Self, 0xF0, 0, 0, 0)
     Yield()
 
-    PlayEffect(0xFF, 0xFF, showup_eff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+    PlayEffect(0xFF, 0xFF, showupEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
     SoundEx(卡西乌斯_音效_雷光击_现身, 0)
 
     TurnDirection(CraftTarget.Self, CraftTarget.TargetChr, 0, 0, 0x0)
@@ -111,5 +111,5 @@ def main():
     Sleep(800)
     Yield()
 
-    for eff in eff_list:
+    for eff in effList:
         FreeEffect(eff)

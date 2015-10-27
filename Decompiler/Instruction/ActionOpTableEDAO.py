@@ -132,7 +132,7 @@ InstructionNames[0x7E] = 'AS_7E'
 InstructionNames[0x7F] = 'BlurSwitch'
 InstructionNames[0x80] = 'CancelBlur'
 InstructionNames[0x82] = 'AS_82'
-InstructionNames[0x83] = 'AS_83'
+InstructionNames[0x83] = 'SortTarget'
 InstructionNames[0x84] = 'ChrRotate'
 InstructionNames[0x85] = 'AS_85'
 InstructionNames[0x87] = 'AS_87'
@@ -169,9 +169,9 @@ InstructionNames[0xAE] = 'QueueWorkItem'
 InstructionNames[0xAF] = 'AS_AF'
 InstructionNames[0xB0] = 'AS_B0'
 InstructionNames[0xB1] = 'AS_B1'
-InstructionNames[0xB2] = 'PlayBgm'
-InstructionNames[0xB3] = 'AS_B3'
-InstructionNames[0xB4] = 'AS_B4'
+InstructionNames[0xB2] = 'PlayBGM'
+InstructionNames[0xB3] = 'SetScenarioFlags'
+InstructionNames[0xB4] = 'SetChrCalcEnable'
 InstructionNames[0xB5] = 'LoadCclm'
 InstructionNames[0xB6] = 'UnlockCclm'
 InstructionNames[0xB7] = 'AS_B7'
@@ -439,8 +439,8 @@ edao_as_op_list = \
     inst(SetTeamRushState,              'B'),
     inst(ChrJumpToMonster,              'HH'),              # ChrJumpToMonster(hight, speed)
     inst(ChrJumpBack,                   'HH'),
-    inst(ChrMove,                       'BBiiiiB'),         # ChrMove(chr, target, x, z, y, time, 0)
-    inst(LoadEffect,                    'BS'),
+    inst(ChrMove,                       'BBiiiiB'),         # ChrMove(chr, target, x, y, z, time, 0)
+    inst(LoadEffect,                    'BS'),              # LoadEffect(effId, effPath[:10])
     inst(FreeEffect,                    'B'),
     inst(AS_14,                         'B'),
     inst(WaitEffect,                    'BB'),
@@ -517,8 +517,8 @@ edao_as_op_list = \
     inst(SetBattleSpeed,                'I'),
     inst(Voice,                         'BHHHHB'),
     inst(Sound,                         'H'),
-    inst(SoundEx,                       'HB'),
-    inst(StopSound,                     'H'),
+    inst(SoundEx,                       'HB'),          # SoundEx(se, repeat)
+    inst(StopSound,                     'H'),           # StopSound(se)
     inst(AS_67,                         'WBB'),
     inst(AS_68,                         'BBL'),
     inst(LoadChrChip,                   NO_OPERAND,             0,                          as_load_chr_chip),
@@ -540,10 +540,10 @@ edao_as_op_list = \
     inst(AS_7C,                         'BB'),
     inst(AS_7D,                         'BL'),
     inst(AS_7E,                         'L'),
-    inst(BlurSwitch,                    'WLBBB'),
+    inst(BlurSwitch,                    'WLBBB'),       # BlurSwitch(0, rgba, 0, 1, 3)
     inst(CancelBlur,                    'I'),
     inst(AS_82),
-    inst(AS_83,                         'B'),
+    inst(SortTarget,                    'B'),
     inst(ChrRotate,                     'BHHHIB'),      # ChrRotate(TargetChr, Degree, xx, xxx, xxxx, 4)
     inst(AS_85,                         'BBL'),
     inst(AS_87,                         'WB'),
@@ -580,9 +580,9 @@ edao_as_op_list = \
     inst(AS_AF,                         'W'),
     inst(AS_B0,                         'WW'),
     inst(AS_B1,                         'BSBL'),
-    inst(PlayBgm,                       'BW'),
-    inst(AS_B3,                         'BW'),
-    inst(AS_B4,                         'BB'),
+    inst(PlayBGM,                       'BW'),
+    inst(SetScenarioFlags,              'BW'),
+    inst(SetChrCalcEnable,              'BB'),
     inst(LoadCclm,                      NO_OPERAND,             0,                          as_load_cclm),
     inst(UnlockCclm,                    NO_OPERAND,             0,                          as_unlock_cclm),
     inst(AS_B7),

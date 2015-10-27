@@ -205,18 +205,19 @@ class ChipFileIndex:
                 return
 
             name = param
+            nameLower = name.lower()
 
-            if name[:len(monster)].lower() == monster:
+            if nameLower.startswith(monster):
 
                 chiptype = CHIP_TYPE_MONSTER
                 name = name[len(monster):]
 
-            elif name[:len(apl)].lower() == apl:
+            elif nameLower.startswith(apl):
 
                 chiptype = CHIP_TYPE_APL
                 name = name[len(apl):]
 
-            elif name[:len(chr)].lower() == chr:
+            elif nameLower.startswith(chr):
 
                 chiptype = CHIP_TYPE_CHAR
                 name = name[len(chr):]
@@ -520,4 +521,5 @@ class CraftTarget:
     TargetPos   = 0xFB
     Self        = 0xFF
     InitialPos  = 0xFD
+    OriginalPos = 0xF0
 

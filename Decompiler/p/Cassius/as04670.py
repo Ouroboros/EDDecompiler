@@ -1,17 +1,16 @@
-﻿from ActionHelper import *
-from Voice import *
+﻿from Cassius import *
 import SysCraft
 
 def main():
     CreateBattleAction("as04670.dat", ((128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176), (128, 176)))
 
     AddPreloadChip((
-        "chr/ch04670.itc",         # 00 0
-        "chr/ch04671.itc",         # 01 1
-        "chr/ch04673.itc",         # 02 2
-        "chr/ch04675.itc",         # 03 3
-        "chr/ch20290.itc",         # 04 4
-        "chr/ch20715.itc",         # 05 5
+        CHR_Cassius_Stand,          # 00 0
+        CHR_Cassius_Move,           # 01 1
+        CHR_Cassius_Underattack,    # 02 2
+        CHR_Cassius_Aria,           # 03 3
+        CHR_Cassius_Defense,        # 04 4
+        CHR_Cassius_Dead,           # 05 5
     ))
 
     CraftAction((
@@ -32,9 +31,9 @@ def main():
         'stub_craft',                       # 0E 14
         "SysCraft_Counter",                 # 0F 15
         "Craft_百烈击",                      # 10 16
-        "Craft_钢盔回旋踢",                  # 11 17
-        EMPTY_ACTION,                       # 12 18
-        EMPTY_ACTION,                       # 13 19
+        "Craft_钢盔回旋踢",                 # 11 17
+        "Craft_钢盔断",                     # 12 18
+        "Craft_神罗天征",                   # 13 19
         EMPTY_ACTION,                       # 14 20
         EMPTY_ACTION,                       # 15 21
         EMPTY_ACTION,                       # 16 22
@@ -81,6 +80,16 @@ def main():
     label('Craft_钢盔回旋踢')
     import 钢盔回旋踢
     钢盔回旋踢.main()
+    Return()
+
+    label('Craft_钢盔断')
+    import 钢盔断
+    钢盔断.main()
+    Return()
+
+    label('Craft_神罗天征')
+    import 神罗天征
+    神罗天征.main()
     Return()
 
     label('stub_craft')

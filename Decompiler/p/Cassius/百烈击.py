@@ -1,21 +1,20 @@
-from ActionHelper import *
-from Voice import *
+from Cassius import *
 
 def main():
     chip = 7
-    attack_chip = 8
-    hit_eff = 0
-    critical_hit_eff = 1
-    pre_critical_hit_eff = 2
+    attackChip = 8
+    hitEff = 0
+    criticalHitEff = 1
+    preCriticalHitEff = 2
 
-    eff_list = [hit_eff, critical_hit_eff, pre_critical_hit_eff]
+    effList = [hitEff, criticalHitEff, preCriticalHitEff]
 
     with ResourceLock:
-        LoadChrChip(chip,                   "chr/ch04678.itc", 0xFF)
-        LoadChrChip(attack_chip,            "chr/ch04672.itc", 0xFF)
-        LoadEffect(hit_eff,                 "battle/ms00001.eff")
-        LoadEffect(critical_hit_eff,        "battle/cr006402.eff")
-        LoadEffect(pre_critical_hit_eff,    "battle/cr006401.eff")
+        LoadChrChip(chip,               CHR_Cassius_BaiLieJi, 0xFF)
+        LoadChrChip(attackChip,         CHR_Cassius_Attack, 0xFF)
+        LoadEffect(hitEff,              "battle/ms00001.eff")
+        LoadEffect(criticalHitEff,      "battle/cr006402.eff")
+        LoadEffect(preCriticalHitEff,   "battle/cr006401.eff")
 
     ResetTarget()
     ResetLookingTargetData()
@@ -41,14 +40,16 @@ def main():
 
         if t % 2 == 0:
             DamageAnime(CraftTarget.TargetChr, 0, 0x32)
-            PlayEffect(0xFF, 0xFE, hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, -1)
+            DamageCue(CraftTarget.TargetChr)
+            PlayEffect(0xFF, 0xFE, hitEff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, -1)
 
     DamageAnime(CraftTarget.TargetChr, 0, 0x32)
-    SetChrChip(CraftTarget.Self, attack_chip)
+    DamageCue(CraftTarget.TargetChr)
+    SetChrChip(CraftTarget.Self, attackChip)
     SetChrSubChip(CraftTarget.Self, 0x0)
     Yield()
 
-    PlayEffect(0xFF, 0xFF, pre_critical_hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 2)
+    PlayEffect(0xFF, 0xFF, preCriticalHitEff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 2)
     Sleep(200)
     Yield()
 
@@ -70,7 +71,7 @@ def main():
     DamageCue(0xFE)
     SetCondition(CraftTarget.TargetChr, CraftConditionFlags.Stun, 90, 1)
     SoundEx(卡西乌斯_音效_百烈击_结尾, 0)
-    PlayEffect(0xFF, 0xFF, critical_hit_eff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 3)
+    PlayEffect(0xFF, 0xFF, criticalHitEff, 0x1, 0, 1000, 0, 0, 0, 0, 1000, 1000, 1000, 3)
 
     SetChrSubChip(CraftTarget.Self, 0x7)
     Sleep(0x32)
@@ -87,7 +88,7 @@ def main():
 
     AS_14(0x2)
 
-    for eff in eff_list:
+    for eff in effList:
         FreeEffect(eff)
 
     Return()
