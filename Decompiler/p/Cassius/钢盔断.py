@@ -106,49 +106,38 @@ def main():
         Yield()
 
         SortTarget(0)
-        ResetTarget()
 
-        label('钢盔断_next_target')
+        def damageloop():
+            TurnDirection(TargetChr, Self, 0, 0, 0x0)
 
-        ForeachTarget('钢盔断_next_target_end')
-        TurnDirection(TargetChr, Self, 0, 0, 0x0)
+            def underattack():
+                EndChrThread(Self, 0)
+                SetChrChip(0xFF, 0x2)
+                SetChrSubChip(0xFF, 0x0)
 
-        def underattack():
-            EndChrThread(Self, 0)
-            SetChrChip(0xFF, 0x2)
-            SetChrSubChip(0xFF, 0x0)
+                AS_89(Self)
+                ChrJump(Self, Self, 0, 0, 0, 3000, 1000)
+                # ChrMove(Self, 0xF0, 0, 0, 0, 0, 0)
+                AS_9C(Self)
+                Yield()
+                Return()
 
-            AS_89(Self)
-            ChrJump(Self, Self, 0, 0, 0, 3000, 1000)
-            # ChrMove(Self, 0xF0, 0, 0, 0, 0, 0)
-            AS_9C(Self)
+            QueueWorkItem(TargetChr, 1, underattack)
+
+            PlayEffect(TargetChr, TargetChr, hitEff, 3, 0, -500, 0, 0, 0, 0, 500, 500, 500, 0xFF)
             Yield()
-            Return()
 
-        QueueWorkItem(TargetChr, 1, underattack)
-
-        PlayEffect(TargetChr, TargetChr, hitEff, 3, 0, -500, 0, 0, 0, 0, 500, 500, 500, 0xFF)
-        Yield()
-        NextTarget()
-        Jump('钢盔断_next_target')
-
-        label('钢盔断_next_target_end')
+        ForeachTargetEx(damageloop)
 
         WaitChrThread(0xFC, 1)
         WaitChrThread(0xFC, 2)
 
-        ResetTarget()
+        def damageloop():
+            WaitChrThread(TargetChr, 1)
+            DamageCue(TargetChr)
+            Yield()
 
-        label('钢盔断_damage_next_target')
-
-        ForeachTarget('钢盔断_damage_next_target_end')
-        WaitChrThread(TargetChr, 1)
-        DamageCue(TargetChr)
-        Yield()
-        NextTarget()
-        Jump('钢盔断_damage_next_target')
-
-        label('钢盔断_damage_next_target_end')
+        ForeachTargetEx(damageloop)
 
         AS_8F(0)
         Return()

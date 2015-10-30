@@ -34,7 +34,7 @@ def main():
         "Craft_钢盔回旋踢",                 # 11 17
         "Craft_钢盔断",                     # 12 18
         "Craft_神罗天征",                   # 13 19
-        EMPTY_ACTION,                       # 14 20
+        "Craft_精神分裂",                    # 14 20
         EMPTY_ACTION,                       # 15 21
         EMPTY_ACTION,                       # 16 22
         EMPTY_ACTION,                       # 17 23
@@ -90,6 +90,21 @@ def main():
     label('Craft_神罗天征')
     import 神罗天征
     神罗天征.main()
+    Return()
+
+    label('Craft_精神分裂')
+    LoadAvatar("ms4670")
+    SendMessage(2)
+    Yield()
+
+    hasAvatar = GenerateUniqueLable()
+    JumpToLabelIfHasTarget(hasAvatar)
+    Return()
+
+    label(hasAvatar)
+
+    TurnDirection(0xFE, 0xFF, 0, 0, 0)
+    ShowChr(0xFE, 0)
     Return()
 
     label('stub_craft')

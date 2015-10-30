@@ -39,7 +39,7 @@ def main():
     MaximumCP          = 200
     InitialCP          = 0
 
-    SPD                = 12
+    SPD                = 120
     MoveSPD            = 10
     MOV                = 6
     STR                = 3450
@@ -54,7 +54,7 @@ def main():
     EXP                = 1024
     Unknown_2E         = 0x0
     Unknown_30         = 0x0
-    AIType             = 0x0
+    AIType             = 0xFF
     Unknown_33         = 0x3E8
     Unknown_35         = 0x9
     Unknown_36         = 0xA280
@@ -109,10 +109,10 @@ def main():
                     CraftRange.Target,
                     CraftState.Physical, CraftState.NoneState,
                     3, 1,
-                    0, 0,
+                    0, 35,
                     0,
                     2,
-                    0, 0,
+                    50, 0,
                     0, 0,
                )
 
@@ -124,10 +124,10 @@ def main():
                     CraftRange.CircleOnSelf,
                     CraftState.Physical, CraftState.NoneState,
                     1, 1,
-                    0, 0,
+                    0, 40,
                     0,
                     10,
-                    0, 0,
+                    70, 0,
                     0, 0,
                )
 
@@ -139,10 +139,10 @@ def main():
                     CraftRange.LineOnLocation,
                     CraftState.Physical, CraftState.ATDelay,
                     54, 100,
-                    0, 0,
+                    0, 40,
                     0,
                     5,
-                    0, 0,
+                    50, 0,
                     50, 0,
                )
 
@@ -154,11 +154,41 @@ def main():
                     CraftRange.FullMap,
                     CraftState.Physical, CraftState.NoneState,
                     1, 100,
+                    0, 100,
+                    0,
+                    0,
+                    100, 0,
+                    0, 0,
+               )
+
+    # 精神分裂 = CreateCraft(
+    #                 "精神分裂",
+    #                 "",
+    #                 0x5, 0x12, 0x21,
+    #                 CraftAttribute.NoAttribute,
+    #                 CraftRange.SelectLocation,
+    #                 CraftState.NoneState, CraftState.NoneState,
+    #                 0, 0,
+    #                 0, 0,
+    #                 0,
+    #                 1,
+    #                 0, 1,
+    #                 0xFF, 1,
+    #            )
+
+    精神分裂 = CreateCraft(
+                    "精神分裂",
+                    "",
+                    0x93, 0x12, 0x1,
+                    CraftAttribute.NoAttribute,
+                    CraftRange.SelectLocation,
+                    CraftState.NoneState, CraftState.NoneState,
+                    0, 0,
                     0, 0,
                     0,
                     0,
-                    50, 0,
                     0, 0,
+                    0xFF, 1,
                )
 
     CraftList = CreateCraftList([
@@ -167,6 +197,7 @@ def main():
                     钢盔回旋踢,
                     钢盔断,
                     神罗天征,
+                    精神分裂,
                 ])
 
     Attack = CreateAI(0x1, 0,   0x0, 0x1, 0x00, 0x05, Craft_03E8,         [0,     0,      1,      0])
@@ -175,12 +206,13 @@ def main():
     Craft_钢盔回旋踢    = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x11, 钢盔回旋踢,      [30,    1,      0,      0])
     Craft_钢盔断        = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x12, 钢盔断,         [30,    1,      0,      0])
     Craft_神罗天征      = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x13, 神罗天征,         [30,    1,      0,      0])
+    Craft_精神分裂      = CreateAI(0x3,  100,  0x0,  0x1,  0x00, 0x14, 精神分裂,         [30,    1,      0,      0])
 
     # SCraft_圣技大十字    = CreateAI(0xA, 100, 0x0, 0x1, 0x00, 0x1A, 圣技大十字,         [100,   0,      0,      0])
 
 
     ArtsAIList          = []
-    CraftAIList         = [Craft_神罗天征, Craft_钢盔断, Craft_钢盔回旋踢, Craft_百烈击]
+    CraftAIList         = [Craft_精神分裂, Craft_神罗天征, Craft_钢盔断, Craft_钢盔回旋踢, Craft_百烈击]
     SCraftAIList        = []
     SupportCraftAIList  = []
 

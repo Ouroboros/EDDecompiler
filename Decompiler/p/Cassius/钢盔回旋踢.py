@@ -62,26 +62,19 @@ def main():
     LookingTargetAdd(CraftTarget.Self, "", 0x0)
     LookingTarget(100, 20, 30)
 
-    ResetTarget()
+    def damage():
+        PlayEffect(0xFF, 0xF9, kickEff, 0x400, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+        ChrMove(CraftTarget.Self, CraftTarget.TargetChr, 0, 0, 0, 50, 0)
+        PlayEffect(0xFF, 0xF8, hitEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
+        AS_8D(0x1F, CraftTarget.Self, 0xF0, 0x0, 0x0)
+        SoundEx(卡西乌斯_音效_雷光击_击中, 0)
+        DamageAnime(CraftTarget.TargetChr, 0, 50)
+        DamageCue(CraftTarget.TargetChr)
+        LockCamera(0xF8, 0, 0, 0, 100)
+        Sleep(50)
+        Yield()
 
-    label("回旋踢_next_target")
-
-    ForeachTarget("回旋踢_next_target_end")
-
-    PlayEffect(0xFF, 0xF9, kickEff, 0x400, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
-    ChrMove(CraftTarget.Self, CraftTarget.TargetChr, 0, 0, 0, 50, 0)
-    PlayEffect(0xFF, 0xF8, hitEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
-    AS_8D(0x1F, CraftTarget.Self, 0xF0, 0x0, 0x0)
-    SoundEx(卡西乌斯_音效_雷光击_击中, 0)
-    DamageAnime(CraftTarget.TargetChr, 0, 50)
-    DamageCue(CraftTarget.TargetChr)
-    LockCamera(0xF8, 0, 0, 0, 100)
-    Sleep(50)
-    Yield()
-    NextTarget()
-    Jump("回旋踢_next_target")
-
-    label("回旋踢_next_target_end")
+    ForeachTargetEx(damage)
 
     # CancelEffect(CraftTarget.Self, 4)
     Sleep(500)

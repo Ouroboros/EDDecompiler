@@ -46,11 +46,6 @@ def main():
     Sleep(500)
     Yield()
 
-    ShowChr(Self, 200)
-    ChrMove(Self, TargetPos, 0, 4000, 0, 500, 0)
-    Sleep(2000)
-    Yield()
-
     def ariaThread():
         label('神罗天征_ariaThread')
         for i in range(0, 4):
@@ -61,22 +56,26 @@ def main():
 
     SetChrChip(Self, 3)
     QueueWorkItem(Self, 1, ariaThread)
+
+    ShowChr(Self, 200)
+    ChrMove(Self, TargetPos, 0, 4000, 0, 500, 0)
+    Sleep(2000)
     Yield()
     PlayEffect(Self, Self, ShinraTenseiEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
     Sleep(300)
     Yield()
 
-    # SoundEx(685, 0x0)
     SoundEx(687, 0x1)
     SoundEx(693, 0x1)
     Voice(0, 卡西乌斯_神罗天征_ここより, 0, 0, 0, 0xFE)
-    Sleep(1500)
+    Sleep(3100)
     Yield()
 
-    # SoundEx(698, 0x0)
-    Sleep(6200 - 1500)
+    Voice(0, 卡西乌斯_神罗天征_世界に痛みを, 0, 0, 0, 0xFE)
+    Sleep(6200 - 3100)
     Yield()
 
+    Voice(0, 卡西乌斯_神罗天征, 0, 0, 0, 0xFE)
     EndChrThread(Self, 1)
     SetChrChip(Self, 3)
     SetChrSubChip(Self, 4)
@@ -89,20 +88,13 @@ def main():
 
         label('continue_attack')
 
-        ResetTarget()
+        def damage():
+            Knockback(1)
+            DamageAnime(CraftTarget.TargetChr, 1, 50)
+            DamageCue(CraftTarget.TargetChr)
+            Yield()
 
-        label("神罗天征_next_target")
-
-        ForeachTarget("神罗天征_next_target_end")
-
-        Knockback(1)
-        DamageAnime(CraftTarget.TargetChr, 1, 50)
-        DamageCue(CraftTarget.TargetChr)
-        Yield()
-        NextTarget()
-        Jump("神罗天征_next_target")
-
-        label("神罗天征_next_target_end")
+        ForeachTargetEx(damage)
 
         Sleep(50)
         Jump('continue_attack')
@@ -111,7 +103,6 @@ def main():
     SetChrSubChip(Self, 5)
     StopSound(693)
     StopSound(687)
-    Voice(0, 卡西乌斯_神罗天征_世界に痛みを, 0, 0, 0, 0xFE)
     for i in range(10):
         PlayEffect(Self, TargetPos, ShinraTenseiEarthEff, 0, 0, 0, 0, 0, 0, 0, 1000, 1000, 1000, 0xFF)
         Sleep(200)

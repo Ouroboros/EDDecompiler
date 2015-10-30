@@ -48,3 +48,12 @@ class _ResourceLock:
 
 ResourceLock = _ResourceLock()
 del _ResourceLock
+
+def nativeCall(function, param1 = 0, param2 = 0, param3 = 0, param4 = 0):
+    AS_8D(function, param1, param2, param3, param4)
+
+def ReiJiMaiGo():
+    nativeCall(0x70)
+
+def LoadAvatar(msFile):
+    nativeCall(0x71, BattleScriptFileIndex(msFile).Index())

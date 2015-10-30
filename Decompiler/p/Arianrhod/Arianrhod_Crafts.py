@@ -1213,7 +1213,7 @@ def Craft_暴雨疾风枪():
 
 
 def Craft_大地轰雷锤(enemy_version = False):
-    
+
     AS_78(0x1)
     LoadChrChip(0x7, "chr/ch04257.itc", 0xFF)
     LoadEffect(0x0, "battle/cr035200.eff")
@@ -1354,7 +1354,7 @@ def 零时迷子():
 
     Call(rei_ji_mai_go)
 
-    AS_8D(0x70, 0, 0, 0, 0)
+    ReiJiMaiGo()
     WaitEffect(0xff, 3)
     Yield()
 
