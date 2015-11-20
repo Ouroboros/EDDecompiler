@@ -2,10 +2,10 @@ from Assembler.Assembler2 import *
 from Base.EDAOBase import *
 
 def GetOpCode(fs):
-    return fs.byte()
+    return fs.ReadByte()
 
 def WriteOpCode(fs, op):
-    return fs.wbyte(op)
+    return fs.WriteByte(op)
 
 edao_fa_op_table = InstructionTable(GetOpCode, WriteOpCode, DefaultGetLabelName, CODE_PAGE)
 
@@ -75,12 +75,11 @@ class FieldAttackFileInfo:
         if type(buf) == str:
             buf = open(buf, 'rb').read()
 
-        fs = BytesStream()
-        fs.openmem(buf)
+        fs = fileio.FileStream(buf)
 
-        self.HeaderSize = fs.ushort()
-        self.ChipFile   = ChipFileIndex(fs.ulong())
-        self.EffectName = fs.astr()
+        self.HeaderSize = fs.ReadUShort()
+        self.ChipFile   = ChipFileIndex(fs.ReadULong())
+        self.EffectName = fs.ReadMultiByte()
 
         fs.seek(self.HeaderSize)
 
@@ -114,7 +113,7 @@ class FieldAttackFileInfo:
                 lines[i] = '    %s' % lines[i]
 
         lines.insert(2, 'def main():')
-        lines.append('TryInvoke(main)')
+        lines.append('Try(main)')
         lines.append('')
 
         fs = open(filename, 'wb')
@@ -136,13 +135,12 @@ def CreateFieldAttack(FileName, ChipFile, EffectName):
 
     global fafile
 
-    fafile = BytesStream()
-    fafile.open(FileName, 'wb')
+    fafile = fileio.FileStream(FileName, 'wb')
     hdrsize = 2 + 4 + len(EffectName)
 
-    fafile.wushort(hdrsize)
-    fafile.wulong(ChipFileIndex(ChipFile).Index())
-    fafile.write(EffectName)
+    fafile.WriteUShort(hdrsize)
+    fafile.WriteULong(ChipFileIndex(ChipFile).Index())
+    fafile.Write(EffectName)
 
 
 for op, inst in edao_fa_op_table.items():
@@ -173,7 +171,7 @@ def OpCodeHandler(op, args):
 
     data.Instruction.OperandFormat = entry.Operand
 
-    data.FileStream = BytesStream().openmem()
+    data.FileStream = fileio.FileStream(b'')
 
     #print(entry.OpName)
     inst = OpCodeHandlerPrivate(data)
@@ -196,5 +194,5 @@ if __name__ == '__main__':
     def main():
         ForEachFile(sys.argv[1:], procfile, '*._bn')
 
-    TryInvoke(main)
+    Try(main)
 

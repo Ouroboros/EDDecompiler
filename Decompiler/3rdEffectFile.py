@@ -289,7 +289,7 @@ class ED63EffectFile:
             '',
             "if __name__ == '__main__':",
             '    from %s import *' % module,
-            "    TryInvoke(main)",
+            "    Try(main)",
             "",
         ])
 

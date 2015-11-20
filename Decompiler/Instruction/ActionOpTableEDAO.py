@@ -2,10 +2,10 @@ from Assembler.InstructionTable import *
 from Base.EDAOBase import *
 
 def GetOpCode(fs):
-    return fs.byte()
+    return fs.ReadByte()
 
 def WriteOpCode(fs, op):
-    return fs.wbyte(op)
+    return fs.WriteByte(op)
 
 edao_as_op_table = InstructionTable(GetOpCode, WriteOpCode, DefaultGetLabelName, CODE_PAGE)
 
@@ -297,7 +297,7 @@ def as_op_91(data):
 
         if opr == 0:
             for i in range(0xA):
-                inst.Operand.append(fs.byte())
+                inst.Operand.append(fs.ReadByte())
                 if inst[-1] == 0xFF:
                     break
 
@@ -619,5 +619,5 @@ if __name__ == '__main__':
             valid += 1
     print('known: %d (%d%%)' % (valid, valid / len(edao_as_op_list) * 100))
     print('total: %d' % len(edao_as_op_list))
-    input()
+    console.pause()
 

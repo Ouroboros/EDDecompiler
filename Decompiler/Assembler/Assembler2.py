@@ -165,7 +165,7 @@ class Disassembler:
 
             return inst
 
-        endofblock = Stream.size() if StreamSize == None else (pos + StreamSize)
+        endofblock = Stream.Length if StreamSize == None else (pos + StreamSize)
 
         while True:
             pos = Stream.tell()
@@ -310,7 +310,8 @@ class Disassembler:
         FormattedBlock      = data.FormattedBlock
         block               = data.Block
 
-        if block.Offset in FormattedBlock: return
+        if block.Offset in FormattedBlock:
+            return []
 
         FormattedBlock[block.Offset] = True
 

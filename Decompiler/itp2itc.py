@@ -51,7 +51,7 @@ def main():
     print('combine %s_XXXXXX.itp into %s.itc ...' % (prefix, prefix), end = '')
 
     index = 0
-    itc = FileStream(prefix + '.itc', 'wb')
+    itc = fileio.FileStream(prefix + '.itc', 'wb')
     itc.Position = SIZE_OF_MAGIC + ITC_ENTRY_COUNT * ITC_ENTRY_SIZE + SIZE_OF_SCALE_INFO
 
     entries = []
@@ -61,7 +61,7 @@ def main():
         name = '%s_%06d.itp' % (prefix, index)
         index += 1
         try:
-            itp = FileStream(name, 'rb')
+            itp = fileio.FileStream(name, 'rb')
         except FileNotFoundError:
             break
 
@@ -83,4 +83,4 @@ def main():
         itc.WriteULong(info)
 
 if __name__ == '__main__':
-    TryInvoke(main)
+    Try(main)

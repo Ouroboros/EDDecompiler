@@ -144,40 +144,40 @@ class InstructionTableEntry:
 
         def wlabel():
             labels.append(LabelEntry(value, fs.tell()))
-            fs.wulong(INVALID_OFFSET)
+            fs.WriteULong(INVALID_OFFSET)
 
         def wlabelshort():
             labels.append(LabelEntry(value, fs.tell()))
-            fs.wushort(INVALID_OFFSET)
+            fs.WriteUShort(INVALID_OFFSET)
 
         oprtype = \
         {
-            'c' : lambda : fs.wchar(value),
-            'C' : lambda : fs.wbyte(value),
+            'c' : lambda : fs.WriteChar(value),
+            'C' : lambda : fs.WriteByte(value),
 
-            'b' : lambda : fs.wchar(value),
-            'B' : lambda : fs.wbyte(value),
+            'b' : lambda : fs.WriteChar(value),
+            'B' : lambda : fs.WriteByte(value),
 
-            'w' : lambda : fs.wshort(value),
-            'W' : lambda : fs.wushort(value),
+            'w' : lambda : fs.WriteShort(value),
+            'W' : lambda : fs.WriteUShort(value),
 
-            'h' : lambda : fs.wshort(value),
-            'H' : lambda : fs.wushort(value),
+            'h' : lambda : fs.WriteShort(value),
+            'H' : lambda : fs.WriteUShort(value),
 
-            'l' : lambda : fs.wlong(value),
-            'L' : lambda : fs.wulong(value),
+            'l' : lambda : fs.WriteLong(value),
+            'L' : lambda : fs.WriteULong(value),
 
-            'i' : lambda : fs.wlong(value),
-            'I' : lambda : fs.wulong(value),
+            'i' : lambda : fs.WriteLong(value),
+            'I' : lambda : fs.WriteULong(value),
 
-            'q' : lambda : fs.wlong64(value),
-            'Q' : lambda : fs.wulong64(value),
+            'q' : lambda : fs.WriteLong64(value),
+            'Q' : lambda : fs.WriteULong64(value),
 
-            'f' : lambda : fs.wfloat(value),
-            'd' : lambda : fs.wfloat(value),
+            'f' : lambda : fs.WriteFloat(value),
+            'd' : lambda : fs.WriteFloat(value),
 
-            's' : lambda : fs.write(value),
-            'S' : lambda : fs.write(value.encode(data.TableEntry.Container.CodePage) + b'\x00'),
+            's' : lambda : fs.Write(value),
+            'S' : lambda : fs.Write(value.encode(data.TableEntry.Container.CodePage) + b'\x00'),
 
             'o' : wlabelshort,
             'O' : wlabel,
@@ -257,7 +257,7 @@ class InstructionTableEntry:
 
     def GetOperand(self, opr, fs):
         def readstr():
-            string = fs.astr(self.Container.CodePage)
+            string = fs.ReadMultiByte(self.Container.CodePage)
             return string
 
         oprtype = \

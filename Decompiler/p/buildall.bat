@@ -17,6 +17,4 @@ move /y *.bin D:\Game\Falcom\ED_AO\Ouroboros\scena
 move /y *.dat D:\Game\Falcom\ED_AO\Ouroboros\battle\dat
 move /y sysatk*.eff D:\Game\Falcom\ED_AO\Ouroboros\effect\eff
 
-call ..\cleanup.bat
-
 rem start D:\Game\Falcom\ED_AO\ED_AO_CRACK.exe

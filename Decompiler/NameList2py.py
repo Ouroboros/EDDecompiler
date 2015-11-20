@@ -10,20 +10,20 @@ class NameListEntry:
         if fs == None:
             return
 
-        self.Id = fs.ushort()
+        self.Id = fs.ReadUShort()
 
         if self.Id == LAST_CHAR_ID:
             return
 
-        self.NameOffset     = fs.ushort()
-        self.WalkChip       = ChipFileIndex(fs.ulong())
-        self.RunChip        = ChipFileIndex(fs.ulong())
-        self.BattleScript   = BattleScriptFileIndex(fs.ulong())
-        self.Unknown_14     = fs.ulong()
+        self.NameOffset     = fs.ReadUShort()
+        self.WalkChip       = ChipFileIndex(fs.ReadULong())
+        self.RunChip        = ChipFileIndex(fs.ReadULong())
+        self.BattleScript   = BattleScriptFileIndex(fs.ReadULong())
+        self.Unknown_14     = fs.ReadULong()
 
         pos = fs.tell()
         fs.seek(self.NameOffset)
-        self.Name = fs.astr()
+        self.Name = fs.ReadMultiByte()
         fs.seek(pos)
 
     def param(self):
@@ -106,4 +106,4 @@ def main(filename):
 
 if __name__ == '__main__':
     for i in sys.argv[1:]:
-        TryInvoke(main, i)
+        Try(main, i)

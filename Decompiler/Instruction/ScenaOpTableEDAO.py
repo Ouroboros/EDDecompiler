@@ -3,10 +3,10 @@ from Base.EDAOBase import *
 from GameData.ItemNameMap import *
 
 def GetOpCode(fs):
-    return fs.byte()
+    return fs.ReadByte()
 
 def WriteOpCode(fs, op):
-    return fs.wbyte(op)
+    return fs.WriteByte(op)
 
 edao_op_table = InstructionTable(GetOpCode, WriteOpCode, DefaultGetLabelName, CODE_PAGE)
 
@@ -401,7 +401,7 @@ class EDAOScenaInstructionTableEntry(InstructionTableEntry):
                 for x in value:
                     wstr(x, True)
 
-                fs.wbyte(0)
+                fs.WriteByte(0)
                 return
 
             fs.write(value)
@@ -410,8 +410,8 @@ class EDAOScenaInstructionTableEntry(InstructionTableEntry):
         {
             'E' : wexpr,
             'S' : wstr,
-            'M' : lambda value : fs.wshort(BGMFileIndex(value).Index()),
-            'T' : lambda value : fs.wushort(ItemTrueNameMap[value] if type(value) == str else value),
+            'M' : lambda value : fs.WriteShort(BGMFileIndex(value).Index()),
+            'T' : lambda value : fs.WriteUShort(ItemTrueNameMap[value] if type(value) == str else value),
         }
 
         return oprtype[opr](value) if opr in oprtype else super().WriteOperand(data, opr, value)
@@ -472,7 +472,7 @@ class EDAOScenaInstructionTableEntry(InstructionTableEntry):
                     if code == SCPSTR_CODE_COLOR:
 
                         # dummy byte ?
-                        strobj.Value = fs.byte()
+                        strobj.Value = fs.ReadByte()
 
                     elif code == SCPSTR_CODE_LINE_FEED or code == 0x0A:
 
@@ -505,7 +505,7 @@ class EDAOScenaInstructionTableEntry(InstructionTableEntry):
                     elif code == SCPSTR_CODE_ITEM:
 
                         # item id
-                        strobj.Value = fs.ushort()
+                        strobj.Value = fs.ReadUShort()
 
                     string.append(strobj)
 
@@ -522,8 +522,8 @@ class EDAOScenaInstructionTableEntry(InstructionTableEntry):
         oprtype = \
         {
             'S' : readstr,
-            'M' : lambda : fs.short(),
-            'T' : lambda : fs.ushort(),
+            'M' : lambda : fs.ReadShort(),
+            'T' : lambda : fs.ReadUShort(),
         }
 
         return oprtype[opr]() if opr in oprtype else super().GetOperand(opr, fs)
@@ -605,16 +605,16 @@ class ScpExpression:
 
         operationmap = \
         {
-            EXPR_PUSH_LONG          : lambda : fs.wulong(self.Operand[0]),
-            EXPR_TEST_SCENA_FLAGS   : lambda : fs.wushort(self.Operand[0]),
-            EXPR_GET_RESULT         : lambda : fs.wushort(self.Operand[0]),
-            EXPR_PUSH_VALUE_INDEX   : lambda : fs.wbyte(self.Operand[0]),
-            EXPR_23                 : lambda : fs.wbyte(self.Operand[0]),
+            EXPR_PUSH_LONG          : lambda : fs.WriteULong(self.Operand[0]),
+            EXPR_TEST_SCENA_FLAGS   : lambda : fs.WriteUShort(self.Operand[0]),
+            EXPR_GET_RESULT         : lambda : fs.WriteUShort(self.Operand[0]),
+            EXPR_PUSH_VALUE_INDEX   : lambda : fs.WriteByte(self.Operand[0]),
+            EXPR_23                 : lambda : fs.WriteByte(self.Operand[0]),
             EXPR_GET_CHR_WORK       : lambda : fs.write(struct.pack('<HB', *self.Operand)),
             EXPR_EXEC_OP            : lambda : handlerdata.Assemble(self.Operand[0]),
         }
 
-        fs.wbyte(operation)
+        fs.WriteByte(operation)
 
         if operation in operationmap:
             operationmap[operation]()
@@ -662,13 +662,13 @@ def ParseScpExpression(data):
     # stack size == 0xB0 ?
 
     while True:
-        operation = fs.byte()
+        operation = fs.ReadByte()
 
         scpexpr = ScpExpression(operation)
 
         if operation == EXPR_PUSH_LONG:
 
-            scpexpr.Operand.append(fs.ulong())
+            scpexpr.Operand.append(fs.ReadULong())
 
         elif operation == EXPR_END:
 
@@ -718,16 +718,16 @@ def ParseScpExpression(data):
         elif operation == EXPR_TEST_SCENA_FLAGS or \
              operation == EXPR_GET_RESULT:
 
-            scpexpr.Operand.append(fs.ushort())
+            scpexpr.Operand.append(fs.ReadUShort())
 
         elif operation == EXPR_PUSH_VALUE_INDEX:
 
-            scpexpr.Operand.append(fs.byte())
+            scpexpr.Operand.append(fs.ReadByte())
 
         elif operation == EXPR_GET_CHR_WORK:
 
-            scpexpr.Operand.append(fs.ushort())
-            scpexpr.Operand.append(fs.byte())
+            scpexpr.Operand.append(fs.ReadUShort())
+            scpexpr.Operand.append(fs.ReadByte())
 
         elif operation == EXPR_RAND:
 
@@ -735,7 +735,7 @@ def ParseScpExpression(data):
 
         elif operation == EXPR_23:
 
-            scpexpr.Operand.append(fs.byte())
+            scpexpr.Operand.append(fs.ReadByte())
 
         expr.append(scpexpr)
 
@@ -754,7 +754,7 @@ def scp_if(data):
         expr = ParseScpExpression(data)
         ins.Operand.append(expr)
 
-        offset = fs.ulong()
+        offset = fs.ReadULong()
         ins.Operand.append(offset)
         ins.BranchTargets.append(offset)
 
@@ -783,7 +783,7 @@ def scp_switch(data):
         ins = data.Instruction
 
         expr = ParseScpExpression(data)
-        optioncount = fs.byte()
+        optioncount = fs.ReadByte()
         options = []
 
         for i in range(optioncount):
@@ -791,7 +791,7 @@ def scp_switch(data):
             options.append((optionid, optionoffset))
             ins.BranchTargets.append(optionoffset)
 
-        defaultoffset = fs.ulong()
+        defaultoffset = fs.ReadULong()
 
         ins.BranchTargets.insert(0, defaultoffset)
 
@@ -861,12 +861,12 @@ def scp_switch(data):
         entry.WriteOperand(data, 'B', len(optlist))
 
         for opt in optlist:
-            fs.wushort(opt[0])
+            fs.WriteUShort(opt[0])
             inst.Labels.append(LabelEntry(opt[1], fs.tell()))
-            fs.wulong(INVALID_OFFSET)
+            fs.WriteULong(INVALID_OFFSET)
 
         inst.Labels.append(LabelEntry(defaultoffset, fs.tell()))
-        fs.wulong(INVALID_OFFSET)
+        fs.WriteULong(INVALID_OFFSET)
 
         return inst
 
@@ -910,10 +910,10 @@ def scp_battle(data):
 
         if BattleInfoOffset != 0xFFFFFFFF:
 
-            ins.Operand.append(fs.byte())
-            ins.Operand.append(fs.ushort())
-            ins.Operand.append(fs.ushort())
-            ins.Operand.append(fs.ushort())
+            ins.Operand.append(fs.ReadByte())
+            ins.Operand.append(fs.ReadUShort())
+            ins.Operand.append(fs.ReadUShort())
+            ins.Operand.append(fs.ReadUShort())
 
             ins.BranchTargets.append(BattleInfoOffset)
 
@@ -925,10 +925,10 @@ def scp_battle(data):
         ins.Operand.append(name)
 
         for i in range(4):
-            ins.Operand.append(fs.ulong())
+            ins.Operand.append(fs.ReadULong())
 
         for i in range(8):
-            ins.Operand.append(fs.ulong())
+            ins.Operand.append(fs.ReadULong())
 
         ins.Operand += entry.GetAllOperand('WW', fs)
 
@@ -1073,7 +1073,7 @@ def scp_2b(data):
         ins = data.Instruction
 
         for i in range(0xC):
-            opr = fs.ushort()
+            opr = fs.ReadUShort()
             ins.Operand.append(opr)
             if opr == 0xFFFF:
                 break
@@ -1244,7 +1244,7 @@ def scp_50(data):
 
         fs = data.FileStream
         ins = data.Instruction
-        ins.Operand.append(fs.byte())
+        ins.Operand.append(fs.ReadByte())
         ins.Operand.append(ParseScpExpression(data))
 
         ins.OperandFormat = 'BE'
@@ -1583,7 +1583,7 @@ def scp_d2(data):
 
         fs = data.FileStream
         ins = data.Instruction
-        ins.Operand.append(fs.byte())
+        ins.Operand.append(fs.ReadByte())
         ins.Operand.append(ParseScpExpression(data))
 
         ins.OperandFormat = 'BE'
@@ -1927,4 +1927,4 @@ if __name__ == '__main__':
             valid += 1
     print('known: %d (%d%%)' % (valid, valid / len(edao_op_list) * 100))
     print('total: %d' % len(edao_op_list))
-    input()
+    console.pause()

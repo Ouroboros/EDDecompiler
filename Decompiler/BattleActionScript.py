@@ -12,8 +12,8 @@ class CharacterPositionFactor:
         if fs == None:
             return
 
-        self.X = fs.byte()
-        self.Y = fs.byte()
+        self.X = fs.ReadByte()
+        self.Y = fs.ReadByte()
 
 class BattleActionScriptInfo:
 
@@ -40,8 +40,8 @@ class BattleActionScriptInfo:
         self.ActionFileType = self.ActionFileType_Normal
 
     def open(self, asname):
-        fs = BytesStream()
-        fs.open(asname)
+        fs = fileio.FileStream()
+        fs.Open(asname)
 
         self.ASFileName = asname
 
@@ -55,14 +55,14 @@ class BattleActionScriptInfo:
             self.ActionFileType = self.ActionFileType_Normal
 
 
-        self.ActionListOffset   = fs.ushort()
+        self.ActionListOffset   = fs.ReadUShort()
 
         if self.ActionFileType == self.ActionFileType_Normal:
-            self.ChrPosFactorOffset = fs.ushort()
-            self.Reserve            = fs.ushort()
+            self.ChrPosFactorOffset = fs.ReadUShort()
+            self.Reserve            = fs.ReadUShort()
 
             while True:
-                index = fs.ulong()
+                index = fs.ReadULong()
                 if index == 0xFFFFFFFF:
                     break
 
@@ -79,7 +79,7 @@ class BattleActionScriptInfo:
             if fs.tell() >= minoffset:
                 break
 
-            offset = fs.ushort()
+            offset = fs.ReadUShort()
             if offset == 0:
                 break
 
@@ -94,7 +94,7 @@ class BattleActionScriptInfo:
 
         return
 
-        for i in range(0x69, fs.size()):
+        for i in range(0x69, fs.Length):
             if i not in offsetlist:
                 print('%X' % i)
                 #input()
@@ -116,10 +116,10 @@ class BattleActionScriptInfo:
                     elif t_magic.endswith('\\patch2\\text\\t_magic._dt'):
                         t_magic = t_magic.replace('\\patch2\\text\\t_magic._dt', '\\data\\text\\t_magic._dt')
 
-                magic = BytesStream()
-                magic.open(t_magic)
+                magic = fileio.FileStream()
+                magic.Open(t_magic)
                 for i in range(len(self.ActionList)):
-                    offsetlist.append(magic.ushort())
+                    offsetlist.append(magic.ReadUShort())
                     BuiltinArtsNames.append('')
 
                 NameConflict = {}
@@ -134,12 +134,12 @@ class BattleActionScriptInfo:
 
                     magic.seek(offset + 0x18)
 
-                    offset = magic.ushort()
+                    offset = magic.ReadUShort()
                     if offset == 0:
                         continue
 
                     magic.seek(offset)
-                    name = magic.astr().replace(' ', '')
+                    name = magic.ReadMultiByte().replace(' ', '')
 
                     if name == '':
                         continue
@@ -352,7 +352,7 @@ class BattleActionScriptInfo:
                 lines[i] = '    %s' % lines[i]
 
         lines.insert(2, 'def main():')
-        lines.append('TryInvoke(main)')
+        lines.append('Try(main)')
         lines.append('')
 
         if self.ChrName != None:
@@ -402,8 +402,8 @@ def CreateBattleAction(filename, ChrPosFactorList = None):
     global actionfile
     actionfile = BattleActionScriptInfoPort()
 
-    actionfile.fs = BytesStream()
-    actionfile.fs.open(filename, 'wb+')
+    actionfile.fs = fileio.FileStream()
+    actionfile.fs.Open(filename, 'wb+')
 
     actionfile.FileName = filename
     for factor in ChrPosFactorList:
@@ -418,13 +418,13 @@ def CreateArtsAction(filename):
     global actionfile
     actionfile = BattleActionScriptInfoPort()
 
-    actionfile.fs = BytesStream()
-    actionfile.fs.open(filename, 'wb+')
+    actionfile.fs = fileio.FileStream()
+    actionfile.fs.Open(filename, 'wb+')
 
     actionfile.ActionFileType = BattleActionScriptInfoPort.ActionFileType_Arts
 
     actionfile.ActionListOffset = 2
-    actionfile.fs.wushort(actionfile.ActionListOffset)
+    actionfile.fs.WriteUShort(actionfile.ActionListOffset)
 
 
 def AddPreloadChip(ChipFileList):
@@ -436,22 +436,22 @@ def AddPreloadChip(ChipFileList):
     fs.seek(6)
 
     for chip in ChipFileList:
-        fs.wulong(ChipFileIndex(chip).Index())
+        fs.WriteULong(ChipFileIndex(chip).Index())
 
-    fs.wulong(0xFFFFFFFF)
-    fs.wushort(0)
+    fs.WriteULong(0xFFFFFFFF)
+    fs.WriteUShort(0)
 
     actionfile.ChrPosFactorOffset = fs.tell()
     for factor in actionfile.ChrPosFactor:
-        fs.wbyte(factor.X)
-        fs.wbyte(factor.Y)
+        fs.WriteByte(factor.X)
+        fs.WriteByte(factor.Y)
 
     actionfile.ActionListOffset = fs.tell()
     actionfile.ActionListOffset += 16 - actionfile.ActionListOffset % 16
 
     fs.seek(0)
-    fs.wushort(actionfile.ActionListOffset)
-    fs.wushort(actionfile.ChrPosFactorOffset)
+    fs.WriteUShort(actionfile.ActionListOffset)
+    fs.WriteUShort(actionfile.ChrPosFactorOffset)
     fs.seek(actionfile.ActionListOffset)
 
 def CraftAction(CraftNameList):
@@ -468,7 +468,7 @@ def CraftAction(CraftNameList):
         if craft != INVALID_ACTION_OFFSET:
             actionfile.DelayFixLabels.append(LabelEntry(craft, fs.tell()))
 
-        fs.wushort(INVALID_ACTION_OFFSET)
+        fs.WriteUShort(INVALID_ACTION_OFFSET)
 
     fs.write(b'\x00' * (16 - len(CraftNameList) * 2 % 16))
 
@@ -508,7 +508,7 @@ def OpCodeHandler(op, args):
         data.FileStream = actionfile.PrevousHandlerData.FileStream
         data.Instruction.Labels = actionfile.PrevousHandlerData.Instruction.Labels
     else:
-        data.FileStream = BytesStream().openmem()
+        data.FileStream = fileio.FileStream(b'')
         actionfile.PrevousHandlerData = data
 
     #print(entry.OpName)
@@ -533,7 +533,7 @@ def SaveToFile():
 
     for lb in actionfile.DelayFixLabels:
         fs.seek(lb.Offset)
-        fs.wushort(getlabel(lb.Label))
+        fs.WriteUShort(getlabel(lb.Label))
 
 
 
@@ -549,12 +549,11 @@ Jc(0x16, 0x1, 0x0, "loc_A4A")
 '''
 
 def procfile(file):
-    SetConsoleTitle(os.path.basename(file))
+    console.setTitle(os.path.basename(file))
     print('disasm %s' % file)
     asdat = BattleActionScriptInfo()
     asdat.open(file)
     asdat.SaveToFile(file + '.py')
 
 if __name__ == '__main__':
-
-    TryForEachFileMP(sys.argv[1:], procfile, 'as*.dat')
+    iterlib.forEachFileMP(procfile, sys.argv[1:], 'as*.dat')

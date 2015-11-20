@@ -246,7 +246,7 @@ class EDAOEffectFile:
         return [bytesToString(c) for c in self.header.Children]
 
     def open(self, efffile):
-        fs = FileStream(efffile)
+        fs = fileio.FileStream(efffile)
         self.header = EDAOEffFileHeader(fs)
         self.name = os.path.basename(efffile)
 
@@ -301,7 +301,7 @@ class EDAOEffectFile:
             '',
             "if __name__ == '__main__':",
             '    from %s import *' % module,
-            "    TryInvoke(main)",
+            "    Try(main)",
             "",
         ])
 
@@ -338,8 +338,7 @@ class EDAOEffectFile:
                 unserializeStructure(e, extra[i])
                 part.extra.append(e)
 
-        # fs = FileStream(os.path.join(os.path.dirname(sys.argv[0]), self.name), 'wb')
-        fs = FileStream(self.name, 'wb')
+        fs = fileio.FileStream(self.name, 'wb')
         fs.Write(bytes(self.header))
 
         for part in self.partData:
@@ -357,4 +356,4 @@ def procfile(file):
     ms.saveTo(file + '.py')
 
 if __name__ == '__main__':
-    TryForEachFile(sys.argv[1:], procfile, '*.eff')
+    iterlib.forEachFile(procfile, sys.argv[1:], '*.eff')

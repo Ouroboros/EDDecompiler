@@ -8503,4 +8503,4 @@ def main():
 
     SaveToFile()
 
-TryInvoke(main)
+Try(main)

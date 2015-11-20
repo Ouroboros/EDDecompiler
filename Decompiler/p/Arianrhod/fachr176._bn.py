@@ -34,4 +34,4 @@ def main():
     # Sleep(700)
     Return()
 
-TryInvoke(main)
+Try(main)

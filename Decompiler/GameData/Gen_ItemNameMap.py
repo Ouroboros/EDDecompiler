@@ -36,10 +36,9 @@ def getname(name):
     return name
 
 def peek(file):
-    fs = BytesStream()
-    fs.open(file)
+    fs = fileio.FileStream(file)
 
-    fs.seek(fs.ushort())
+    fs.seek(fs.ReadUShort())
 
     offsetlist = []
     minoffset = 0xFFFFFFFF
@@ -47,7 +46,7 @@ def peek(file):
         if fs.tell() >= minoffset:
             break
 
-        offset = fs.ushort()
+        offset = fs.ReadUShort()
         minoffset = min(minoffset, offset)
         offsetlist.append(offset)
 
@@ -56,7 +55,7 @@ def peek(file):
     itemtruename = {}
 
     fs.seek(offsetlist[0])
-    id = fs.ulong() - 1
+    id = fs.ReadULong() - 1
 
     for offset in offsetlist:
         #if offset in offsetmap: continue
@@ -65,15 +64,15 @@ def peek(file):
         id += 1
 
         fs.seek(offset)
-        id = fs.ulong()
+        id = fs.ReadULong()
 
         #if id == 0xCE: bp()
 
         #if id in itemidmap: bp()
 
-        nameoffset = fs.ushort()
+        nameoffset = fs.ReadUShort()
         fs.seek(nameoffset)
-        truename = fs.astr()
+        truename = fs.ReadMultiByte()
         name = getname(truename)
 
         if name == '':
@@ -104,8 +103,8 @@ def peek(file):
 
 
 def main():
-    items = peek('J:\\Falcom\\ED_AO\\data\\text\\t_ittxt._dt')
-    items += peek('J:\\Falcom\\ED_AO\\data\\text\\t_ittxt2._dt')
+    items = peek('D:\\Game\\Falcom\\ED_AO\\data\\text\\t_ittxt._dt')
+    items += peek('D:\\Game\\Falcom\\ED_AO\\data\\text\\t_ittxt2._dt')
 
     items += [[0xCD, '物理反射', '物理反射'], [0xCE, '魔法反射', '魔法反射']]
 
@@ -150,4 +149,4 @@ def main():
 
     open('ItemNameMap.py', 'wb').write('\r\n'.join(lines).encode('UTF8'))
 
-TryInvoke(main)
+Try(main)

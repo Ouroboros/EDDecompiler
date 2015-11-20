@@ -48,7 +48,7 @@ class ScenarioChipInfo:
             self.ChipIndex = fs
 
         else:
-            self.ChipIndex = fs.ulong()
+            self.ChipIndex = fs.ReadULong()
 
     def __str__(self):
         chiptype = self.ChipIndex >> 20
@@ -500,6 +500,8 @@ class CraftState:
     State_50                = 0x50
 
     QueryMonsterInfo        = 0x51
+
+    State_52                = 0x52
 
     StrSpdUp_Stun           = 0x55
 

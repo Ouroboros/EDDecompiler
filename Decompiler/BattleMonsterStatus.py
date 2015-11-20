@@ -30,26 +30,26 @@ class BattleCraftInfo:
         '''
 
         self.Index                  = CUSTOM_CRAFT_INDEX_BASE + index
-        self.ActionIndex            = fs.ushort()   # 0x00
-        self.Target                 = fs.byte()     # 0x02       # in fact, this is an ushort
-        self.Unknown_3              = fs.byte()     # 0x03
-        self.Attribute              = fs.byte()     # 0x04
-        self.RangeType              = fs.byte()     # 0x05       # CraftRange
-        self.State1                 = fs.byte()     # 0x06       # CraftState
-        self.State2                 = fs.byte()     # 0x07       # CraftState
-        self.RNG                    = fs.byte()     # 0x08
-        self.RangeSize              = fs.byte()     # 0x09
-        self.AriaTime               = fs.byte()     # 0x0A
-        self.SkillTime              = fs.byte()     # 0x0B
-        self.EP_CP                  = fs.ushort()   # 0x0C
-        self.RangeSize2             = fs.ushort()   # 0x0E
-        self.State1Parameter        = fs.short()    # 0x10      e.g. damage factor
-        self.State1Time             = fs.short()    # 0x12      e.g. frozen AT
-        self.State2Parameter        = fs.short()    # 0x14
-        self.State2Time             = fs.short()    # 0x16
+        self.ActionIndex            = fs.ReadUShort()   # 0x00
+        self.Target                 = fs.ReadByte()     # 0x02       # in fact, this is an ushort
+        self.Unknown_3              = fs.ReadByte()     # 0x03
+        self.Attribute              = fs.ReadByte()     # 0x04
+        self.RangeType              = fs.ReadByte()     # 0x05       # CraftRange
+        self.State1                 = fs.ReadByte()     # 0x06       # CraftState
+        self.State2                 = fs.ReadByte()     # 0x07       # CraftState
+        self.RNG                    = fs.ReadByte()     # 0x08
+        self.RangeSize              = fs.ReadByte()     # 0x09
+        self.AriaTime               = fs.ReadByte()     # 0x0A
+        self.SkillTime              = fs.ReadByte()     # 0x0B
+        self.EP_CP                  = fs.ReadUShort()   # 0x0C
+        self.RangeSize2             = fs.ReadUShort()   # 0x0E
+        self.State1Parameter        = fs.ReadShort()    # 0x10      e.g. damage factor
+        self.State1Time             = fs.ReadShort()    # 0x12      e.g. frozen AT
+        self.State2Parameter        = fs.ReadShort()    # 0x14
+        self.State2Time             = fs.ReadShort()    # 0x16
 
-        self.Name = fs.astr()
-        self.Description = fs.astr()
+        self.Name = fs.ReadMultiByte()
+        self.Description = fs.ReadMultiByte()
 
     def binary(self):
         return struct.pack('<HBBBBBBBBBBHHhhhh',
@@ -189,17 +189,17 @@ class BattleCraftAIInfo:
         if fs == None:
             return
 
-        self.Condition                  = fs.byte()
-        self.Probability                = fs.byte()
-        self.Target                     = fs.byte()
-        self.TargetCondition            = fs.byte()
-        self.AriaActionIndex            = fs.byte()
-        self.ActionIndex                = fs.byte()
-        self.CraftIndex                 = fs.ushort()
+        self.Condition                  = fs.ReadByte()
+        self.Probability                = fs.ReadByte()
+        self.Target                     = fs.ReadByte()
+        self.TargetCondition            = fs.ReadByte()
+        self.AriaActionIndex            = fs.ReadByte()
+        self.ActionIndex                = fs.ReadByte()
+        self.CraftIndex                 = fs.ReadUShort()
         self.Parameter                  = [0] * 4
 
         for i in range(len(self.Parameter)):
-            self.Parameter[i] = fs.ulong()
+            self.Parameter[i] = fs.ReadULong()
 
     def binary(self):
         return struct.pack('<BBBBBBHLLLL',
@@ -380,60 +380,59 @@ class BattleMonsterStatus:
         def GetItemName(id):
             return '%s' % ItemNameMap[id] if id in ItemNameMap else '0x%04X' % id
 
-        fs = BytesStream()
-        fs.open(msfilename)
+        fs = fileio.FileStream(msfilename)
 
-        self.ASFile                 = BattleScriptFileIndex(fs.ulong())
+        self.ASFile                 = BattleScriptFileIndex(fs.ReadULong())
 
-        self.Level                  = fs.ushort()
+        self.Level                  = fs.ReadUShort()
 
-        self.MaximumHP              = fs.ulong()
-        self.InitialHP              = fs.ulong()
-        self.MaximumEP              = fs.ushort()
-        self.InitialEP              = fs.ushort()
-        self.MaximumCP              = fs.ushort()
-        self.InitialCP              = fs.ushort()
+        self.MaximumHP              = fs.ReadULong()
+        self.InitialHP              = fs.ReadULong()
+        self.MaximumEP              = fs.ReadUShort()
+        self.InitialEP              = fs.ReadUShort()
+        self.MaximumCP              = fs.ReadUShort()
+        self.InitialCP              = fs.ReadUShort()
 
-        self.SPD                    = fs.ushort()
-        self.MoveSPD                = fs.ushort()
-        self.MOV                    = fs.ushort()
-        self.STR                    = fs.ushort()
-        self.DEF                    = fs.ushort()
-        self.ATS                    = fs.ushort()
-        self.ADF                    = fs.ushort()
-        self.DEX                    = fs.ushort()
-        self.AGL                    = fs.ushort()
-        self.RNG                    = fs.ushort()
+        self.SPD                    = fs.ReadUShort()
+        self.MoveSPD                = fs.ReadUShort()
+        self.MOV                    = fs.ReadUShort()
+        self.STR                    = fs.ReadUShort()
+        self.DEF                    = fs.ReadUShort()
+        self.ATS                    = fs.ReadUShort()
+        self.ADF                    = fs.ReadUShort()
+        self.DEX                    = fs.ReadUShort()
+        self.AGL                    = fs.ReadUShort()
+        self.RNG                    = fs.ReadUShort()
 
-        self.Unknown_2A             = fs.ushort()
-        self.EXP                    = fs.ushort()
-        self.Unknown_2E             = fs.ushort()
-        self.Unknown_30             = fs.byte()
-        self.AIType                 = fs.ushort()
-        self.Unknown_33             = fs.ushort()
-        self.Unknown_35             = fs.byte()
-        self.Unknown_36             = fs.ushort()
-        self.EnemyFlags             = fs.ushort()
-        self.BattleFlags            = fs.ushort()
-        self.Unknown_3C             = fs.ushort()
-        self.Unknown_3E             = fs.ushort()
+        self.Unknown_2A             = fs.ReadUShort()
+        self.EXP                    = fs.ReadUShort()
+        self.Unknown_2E             = fs.ReadUShort()
+        self.Unknown_30             = fs.ReadByte()
+        self.AIType                 = fs.ReadUShort()
+        self.Unknown_33             = fs.ReadUShort()
+        self.Unknown_35             = fs.ReadByte()
+        self.Unknown_36             = fs.ReadUShort()
+        self.EnemyFlags             = fs.ReadUShort()
+        self.BattleFlags            = fs.ReadUShort()
+        self.Unknown_3C             = fs.ReadUShort()
+        self.Unknown_3E             = fs.ReadUShort()
 
-        self.Sex                    = fs.byte()
-        self.Unknown_41             = fs.byte()
-        self.CharSize               = fs.ulong()
-        self.DefaultEffectX         = fs.ulong()
-        self.DefaultEffectZ         = fs.ulong()
-        self.DefaultEffectY         = fs.ulong()
-        self.Unknown_52             = fs.byte()
-        self.Unknown_53             = fs.byte()
-        self.Unknown_54             = fs.byte()
-        self.Unknown_55             = fs.byte()
+        self.Sex                    = fs.ReadByte()
+        self.Unknown_41             = fs.ReadByte()
+        self.CharSize               = fs.ReadULong()
+        self.DefaultEffectX         = fs.ReadULong()
+        self.DefaultEffectZ         = fs.ReadULong()
+        self.DefaultEffectY         = fs.ReadULong()
+        self.Unknown_52             = fs.ReadByte()
+        self.Unknown_53             = fs.ReadByte()
+        self.Unknown_54             = fs.ReadByte()
+        self.Unknown_55             = fs.ReadByte()
 
-        self.Symbol                 = SymbolFileIndex(fs.ulong())
-        self.Resistance             = fs.ulong()
+        self.Symbol                 = SymbolFileIndex(fs.ReadULong())
+        self.Resistance             = fs.ReadULong()
         self.AttributeRate          = struct.unpack('<HHHHHHH', fs.read(2 * 7))
         self.Sepith                 = list(fs.read(7))
-        self.DropItem               = [ fs.ushort(), fs.ushort() ]
+        self.DropItem               = [ fs.ReadUShort(), fs.ReadUShort() ]
         self.DropRate               = list(fs.read(2))
         self.Equipment              = list(struct.unpack('<HHHHH', fs.read(2 * 5)))
         self.Orbment                = list(struct.unpack('<HHHH', fs.read(2 * 4)))
@@ -444,36 +443,36 @@ class BattleMonsterStatus:
 
         self.Attack                 = BattleCraftAIInfo(fs)
 
-        self.ArtsNumber = fs.byte()
+        self.ArtsNumber = fs.ReadByte()
         for i in range(self.ArtsNumber):
             self.Arts.append(BattleCraftAIInfo(fs))
 
-        self.CraftNumber = fs.byte()
+        self.CraftNumber = fs.ReadByte()
         for i in range(self.CraftNumber):
             self.Craft.append(BattleCraftAIInfo(fs))
 
-        self.SCraftNumber = fs.byte()
+        self.SCraftNumber = fs.ReadByte()
         for i in range(self.SCraftNumber):
             self.SCraft.append(BattleCraftAIInfo(fs))
 
-        self.SupportCraftNumber = fs.byte()
+        self.SupportCraftNumber = fs.ReadByte()
         for i in range(self.SupportCraftNumber):
             self.SupportCraft.append(BattleCraftAIInfo(fs))
 
         index = 0
-        self.CraftInfoNumber = fs.byte()
+        self.CraftInfoNumber = fs.ReadByte()
         for i in range(self.CraftInfoNumber):
             info = BattleCraftInfo(index, fs)
             self.CraftInfo.append(info)
             index += 1
 
-        self.RunawayType            = fs.byte()
-        self.RunawayRate            = fs.byte()
-        self.RunawayParam1          = fs.byte()
-        self.Reserve1               = fs.byte()
+        self.RunawayType            = fs.ReadByte()
+        self.RunawayRate            = fs.ReadByte()
+        self.RunawayParam1          = fs.ReadByte()
+        self.Reserve1               = fs.ReadByte()
 
-        self.Name                   = fs.astr()
-        self.Description            = fs.astr()
+        self.Name                   = fs.ReadMultiByte()
+        self.Description            = fs.ReadMultiByte()
 
     def FindCraftByActionIndex(self, ActionIndex):
         craftindex = None
@@ -716,7 +715,7 @@ class BattleMonsterStatus:
             header.append(l if l == '' else ('    %s' % l))
 
         header.append('')
-        header.append('TryInvoke(main)')
+        header.append('Try(main)')
 
         open(filename, 'wb').write('\r\n'.join(header).encode('utf_8_sig'))
 
@@ -854,4 +853,4 @@ def procfile(file):
     ms.SaveTo(os.path.splitext(file)[0] + '.py')
 
 if __name__ == '__main__':
-    TryForEachFileMP(sys.argv[1:], procfile, 'ms*.dat')
+    iterlib.forEachFileMP(procfile, sys.argv[1:], 'ms*.dat')

@@ -1,7 +1,7 @@
 from ml import *
 from ItemNameMap import *
 
-scena_path = 'J:\\Falcom\\ED_AO\\data\\scena\\'
+scena_path = 'D:\\Game\\Falcom\\ED_AO\\data\\scena\\'
 
 class ItemInfo:
     def __init__(self):
@@ -57,15 +57,15 @@ def lookupactor(actor, func_index):
 
 
 def main():
-    scena = EnumDirectoryFiles(scena_path, '*.py')
+    scena = fileio.getDirectoryFiles(scena_path, '*.py')
 
     scena_info = {}
 
     global_flags_map = {}
 
     for file in scena:
-        SetConsoleTitle(file)
-        lines = ReadTextToList(file)
+        console.setTitle(file)
+        lines = fileio.readLines(file)
 
         file = getscenaname(file)
 
@@ -216,4 +216,4 @@ def main():
 
     open('box.json', 'wb').write('\r\n'.join(lines).encode('U16'))
 
-TryInvoke(main)
+Try(main)

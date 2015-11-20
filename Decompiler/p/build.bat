@@ -19,4 +19,3 @@ move /y *.eff D:\Game\Falcom\ED_AO\Ouroboros\effect\battle
 
 start D:\Game\Falcom\ED_AO\ED_AO_CRACK.exe
 
-call ..\cleanup.bat

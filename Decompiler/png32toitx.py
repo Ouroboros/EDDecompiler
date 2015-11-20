@@ -67,7 +67,7 @@ def png2itc(prefix, namelen, output):
     print('%s_%s.itp => %s ...' % (prefix, format, output))
 
     index = 0
-    itc = FileStream(output, 'wb')
+    itc = fileio.FileStream(output, 'wb')
     itc.Position = SIZE_OF_MAGIC + ITC_ENTRY_COUNT * ITC_ENTRY_SIZE + SIZE_OF_SCALE_INFO
 
     entries = []
@@ -85,7 +85,7 @@ def png2itc(prefix, namelen, output):
         index += 1
 
         png2itp(name, tmpitp)
-        itp = FileStream(tmpitp, 'rb')
+        itp = fileio.FileStream(tmpitp, 'rb')
 
         entry = ItcEntry(itc.Position, itp.Length)
         entries.append(entry)
@@ -127,4 +127,4 @@ def main():
     PauseConsole('done')
 
 if __name__ == '__main__':
-    TryInvoke(main)
+    Try(main)

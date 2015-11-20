@@ -314,4 +314,4 @@ def main():
 
     SaveToMS("ms90020.dat", locals())
 
-TryInvoke(main)
+Try(main)

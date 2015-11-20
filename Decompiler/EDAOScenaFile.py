@@ -38,7 +38,7 @@ def CreateScenaFile(FileName, MapName, Location, MapIndex, MapDefaultBGM, Flags,
     scena.Unknown_51            = Unknown_51
 
     if type(InitData) == bytes:
-        InitData = ScenarioInitData(BytesStream().open(InitData))
+        InitData = ScenarioInitData(fileio.FileStream(InitData))
     elif IsTupleOrList(InitData):
         InitData = ScenarioInitData(InitData)
     else:
@@ -53,8 +53,7 @@ def CreateScenaFile(FileName, MapName, Location, MapIndex, MapDefaultBGM, Flags,
     for i in range(len(IncludeList)):
         scena.IncludedScenario[i] = ScenarioFileIndex(IncludeList[i]).Index()
 
-    scena.fs = BytesStream()
-    scena.fs.open(FileName, 'wb+')
+    scena.fs = fileio.FileStream(FileName, 'wb+')
     scena.fs.seek(0x94)
 
     pos = scena.fs.tell()
@@ -387,7 +386,7 @@ def OpCodeHandler(op, args):
         data.FileStream = scena.PrevousHandlerData.FileStream
         data.Instruction.Labels = scena.PrevousHandlerData.Instruction.Labels
     else:
-        data.FileStream = BytesStream().openmem()
+        data.FileStream = fileio.FileStream(b'')
         scena.PrevousHandlerData = data
 
     #print(entry.OpName)
@@ -454,7 +453,7 @@ def SaveToFile():
 
     for lb in scena.DelayFixLabels:
         fs.seek(lb.Offset)
-        fs.wulong(getlabel(lb.Label))
+        fs.WriteULong(getlabel(lb.Label))
 
     for lb in scena.DelayFixString:
         fs.seek(lb.Offset)
@@ -462,7 +461,7 @@ def SaveToFile():
 
         plog('%X -> %X : %s' % (lb.Offset, pos, lb.Label))
 
-        fs.wulong(pos)
+        fs.WriteULong(pos)
 
     for i in range(len(scena.ScnInfoOffset)):
         plog('%04X : %02X' % (scena.ScnInfoOffset[i], scena.ScnInfoNumber[i]))

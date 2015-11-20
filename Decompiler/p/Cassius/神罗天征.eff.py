@@ -1008,4 +1008,4 @@ def main():
 
 if __name__ == '__main__':
     from EffectFile import *
-    TryInvoke(main)
+    Try(main)

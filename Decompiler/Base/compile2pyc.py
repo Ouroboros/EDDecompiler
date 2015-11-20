@@ -26,6 +26,6 @@ def main():
 
         py_compile.compile(py, compiled + os.path.splitext(py)[0] + '.pyc')
 
-TryInvoke(main)
+Try(main)
 
 #input()
