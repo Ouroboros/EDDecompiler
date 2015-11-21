@@ -132,9 +132,9 @@ class Disassembler:
 
             pos = fs.tell()
 
-            #print('%08X: ' % pos, end = '')
+            # print('%08X: ' % pos, end = '')
             op = InstructionTable.GetOpCode(fs)
-            #print('%02X' % op)
+            # print('%02X' % op)
 
             entry = InstructionTable[op]
 
