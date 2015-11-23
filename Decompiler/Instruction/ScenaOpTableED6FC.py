@@ -1,5 +1,5 @@
 from Assembler.InstructionTable import *
-from Base.EDAOBase import *
+from Base.ED6FCBase import *
 from GameData.ItemNameMap import *
 
 def GetOpCode(fs):
@@ -377,6 +377,9 @@ class ED6FCScenaInstructionTableEntry(InstructionTableEntry):
             'T' : lambda value : fs.WriteUShort(ItemTrueNameMap[value] if type(value) == str else value),
         }
 
+        if opr == 'O':
+            opr = 'o'
+
         return oprtype[opr](value) if opr in oprtype else super().WriteOperand(data, opr, value)
 
     def FormatOperand(self, param):
@@ -493,7 +496,7 @@ class ED6FCScenaInstructionTableEntry(InstructionTableEntry):
         return oprtype[opr]() if opr in oprtype else super().GetOperand(opr, fs)
 
     def GetOperandSize(self, opr, fs):
-        if opr == 'M':
+        if opr in ['M', 'O']:
             return 2
 
         if opr != 'S':
@@ -765,6 +768,8 @@ def scp_switch(data):
 
         ins.BranchTargets.insert(0, defaultoffset)
 
+        if 0x10A in ins.BranchTargets: ibp()
+
         ins.Operand.append(expr)
         ins.Operand.append(options)
         ins.Operand.append(defaultoffset)
@@ -828,15 +833,15 @@ def scp_switch(data):
         for expr in exprlist:
             expr.WriteExpression(data)
 
-        entry.WriteOperand(data, 'B', len(optlist))
+        entry.WriteOperand(data, 'W', len(optlist))
 
         for opt in optlist:
             fs.WriteUShort(opt[0])
             inst.Labels.append(LabelEntry(opt[1], fs.tell()))
-            fs.WriteULong(INVALID_OFFSET)
+            fs.WriteUShort(INVALID_OFFSET)
 
         inst.Labels.append(LabelEntry(defaultoffset, fs.tell()))
-        fs.WriteULong(INVALID_OFFSET)
+        fs.WriteUShort(INVALID_OFFSET)
 
         return inst
 
@@ -1437,8 +1442,8 @@ ed6fc_op_list = \
     inst(OP_89,                     'WLLLW'),
     inst(OP_8A,                     'WWW'),
     inst(OP_8B,                     'WLLW'),
-    inst(OP_8C,                     'WWW'),
-    inst(OP_8D,                     'WLLLLL'),
+    inst(OP_8C,                     'Whh'),
+    inst(OP_8D,                     'Wiiiii'),
     inst(OP_8E,                     'WLLLLB'),
     inst(OP_8F,                     'WLLLLB'),
     inst(OP_90,                     'WLLLLB'),

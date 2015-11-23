@@ -333,14 +333,14 @@ class BattleScriptFileIndex:
 
 class CraftConditionFlags:
     Poison              = 0x00000001
-    Frozen              = 0x00000002
-    Landification       = 0x00000004
+    Freeze              = 0x00000002
+    Petrify             = 0x00000004
     Sleeping            = 0x00000008
     BanArts             = 0x00000010
-    Darkness            = 0x00000020
-    BanCraft            = 0x00000040
-    Confusion           = 0x00000080
-    Stun                = 0x00000100
+    Blind               = 0x00000020
+    Seal                = 0x00000040
+    Confuse             = 0x00000080
+    Faint               = 0x00000100
     OnehitKill          = 0x00000200
     Burning             = 0x00000400
     Rage                = 0x00000800
@@ -430,14 +430,14 @@ class CraftState:
     Arts                    = 0x03
 
     Poison                  = 0x04
-    Frozen                  = 0x05
+    Freeze                  = 0x05
     Burning                 = 0x06
-    BanCraft                = 0x07
+    Seal                    = 0x07
     BanArts                 = 0x08
-    Darkness                = 0x09
+    Blind                   = 0x09
     Sleep                   = 0x0A
-    Confusion               = 0x0B
-    Stun                    = 0x0D
+    Confuse                 = 0x0B
+    Faint                   = 0x0D
     Petrifaction            = 0x0E
 
     OnehitKill              = 0x0F
@@ -464,7 +464,7 @@ class CraftState:
     HealDarkness            = 0x23
     HealSleep               = 0x24
     HealConfusion           = 0x25
-    HealStun                = 0x26
+    HealFaint               = 0x26
     HealPetrifaction        = 0x27
 
     STRBuff                 = 0x28
@@ -503,7 +503,7 @@ class CraftState:
 
     State_52                = 0x52
 
-    StrSpdUp_Stun           = 0x55
+    StrSpdUp_Faint          = 0x55
 
     State_5F                = 0x5F
     State_60                = 0x60

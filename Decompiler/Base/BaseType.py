@@ -59,7 +59,7 @@ class CodeBlock:
 
 
 def IsTupleOrList(val):
-    return type(val) == tuple or type(val) == list
+    return isinstance(val, (list, tuple))
 
 def strlen(string):
     n = 0
@@ -92,6 +92,17 @@ def AdjustParam(param, spacelist, sep = ', '):
 
     return ''.join(param)
 
+def alignFormatArg(align, fmt, *params):
+    if params:
+        fmt = fmt % (params)
+
+    return ljust_cn(fmt + ',', align)
+
+def alignFormatKw(align, fmt, *params):
+    if params:
+        fmt = fmt % (params)
+
+    return ljust_cn(fmt, align) + '='
 
 def GetValidLabelName(name):
     filter = \
