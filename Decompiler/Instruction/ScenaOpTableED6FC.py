@@ -768,8 +768,6 @@ def scp_switch(data):
 
         ins.BranchTargets.insert(0, defaultoffset)
 
-        if 0x10A in ins.BranchTargets: ibp()
-
         ins.Operand.append(expr)
         ins.Operand.append(options)
         ins.Operand.append(defaultoffset)
