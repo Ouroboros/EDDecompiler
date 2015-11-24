@@ -2,6 +2,7 @@ from Assembler.Assembler2 import *
 from Base.ED6FCBase import *
 import Instruction.ScenaOpTableED6FC as ed6fc
 
+# ed6fc.CODE_PAGE = '932'
 CODE_PAGE = ed6fc.CODE_PAGE
 
 NUMBER_OF_INCLUDE_FILE  = 8
@@ -14,17 +15,105 @@ SCN_INFO_EVENT          = 4
 SCN_INFO_ACTOR          = 5
 SCN_INFO_MAXIMUM        = 6
 
+textPosTable = OrderedDict()
+ExtractText = True
+
 class ScenarioEntry:
     def __init__(self, offset = 0, size = 0):
         self.Offset = offset
         self.Size = size
 
+class ScenarioEntryPoint:
+    def __init__(self, fs = None):
+        # size = 0x44
+
+        if fs is None:
+            fs = fileio.FileStream(b'\x00' * 0x44)
+
+        self.Unknown_00         = fs.ReadLong()
+        self.Unknown_04         = fs.ReadLong()
+        self.Unknown_08         = fs.ReadLong()
+        self.Unknown_0C         = fs.ReadUShort()
+        self.Unknown_0E         = fs.ReadUShort()
+        self.Unknown_10         = fs.ReadLong()
+        self.Unknown_14         = fs.ReadLong()
+        self.Unknown_18         = fs.ReadLong()
+        self.Unknown_1C         = fs.ReadLong()
+        self.Unknown_20         = fs.ReadLong()
+        self.Unknown_24         = fs.ReadLong()
+        self.Unknown_28         = fs.ReadLong()
+        self.Unknown_2C         = fs.ReadLong()
+        self.Unknown_30         = fs.ReadUShort()
+        self.Unknown_32         = fs.ReadUShort()
+        self.Unknown_34         = fs.ReadUShort()
+        self.Unknown_36         = fs.ReadUShort()
+        self.Unknown_38         = fs.ReadUShort()
+        self.Unknown_3A         = fs.ReadUShort()
+        self.InitScenaIndex     = fs.ReadUShort()
+        self.InitFunctionIndex  = fs.ReadUShort()        # byte
+        self.EntryScenaIndex    = fs.ReadUShort()
+        self.EntryFunctionIndex = fs.ReadUShort()       # byte
+
+    def params(self):
+        align = 24
+        return [
+            '%s %s,' % (alignFormatKw(align, 'Unknown_00'),         self.Unknown_00),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_04'),         self.Unknown_04),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_08'),         self.Unknown_08),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_0C'),         self.Unknown_0C),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_0E'),         self.Unknown_0E),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_10'),         self.Unknown_10),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_14'),         self.Unknown_14),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_18'),         self.Unknown_18),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_1C'),         self.Unknown_1C),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_20'),         self.Unknown_20),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_24'),         self.Unknown_24),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_28'),         self.Unknown_28),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_2C'),         self.Unknown_2C),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_30'),         self.Unknown_30),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_32'),         self.Unknown_32),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_34'),         self.Unknown_34),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_36'),         self.Unknown_36),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_38'),         self.Unknown_38),
+            '%s %s,' % (alignFormatKw(align, 'Unknown_3A'),         self.Unknown_3A),
+            '%s %s,' % (alignFormatKw(align, 'InitScenaIndex'),     self.InitScenaIndex),
+            '%s %s,' % (alignFormatKw(align, 'InitFunctionIndex'),  self.InitFunctionIndex),
+            '%s %s,' % (alignFormatKw(align, 'EntryScenaIndex'),    self.EntryScenaIndex),
+            '%s %s,' % (alignFormatKw(align, 'EntryFunctionIndex'), self.EntryFunctionIndex),
+        ]
+
+    def binary(self):
+        return struct.pack('<LLLHHLLLLLLLLHHHHHHHHHH',
+                    ULONG(self.Unknown_00).value,
+                    ULONG(self.Unknown_04).value,
+                    ULONG(self.Unknown_08).value,
+                    USHORT(self.Unknown_0C).value,
+                    USHORT(self.Unknown_0E).value,
+                    ULONG(self.Unknown_10).value,
+                    ULONG(self.Unknown_14).value,
+                    ULONG(self.Unknown_18).value,
+                    ULONG(self.Unknown_1C).value,
+                    ULONG(self.Unknown_20).value,
+                    ULONG(self.Unknown_24).value,
+                    ULONG(self.Unknown_28).value,
+                    ULONG(self.Unknown_2C).value,
+                    USHORT(self.Unknown_30).value,
+                    USHORT(self.Unknown_32).value,
+                    USHORT(self.Unknown_34).value,
+                    USHORT(self.Unknown_36).value,
+                    USHORT(self.Unknown_38).value,
+                    USHORT(self.Unknown_3A).value,
+                    USHORT(self.InitScenaIndex).value,
+                    USHORT(self.InitFunctionIndex).value,
+                    USHORT(self.EntryScenaIndex).value,
+                    USHORT(self.EntryFunctionIndex).value,
+                )
+
 class ScenarioNpcInfo:
     def __init__(self, fs = None):
-        if fs == None:
-            return
-
         # size = 0x20
+        if fs is None:
+            fs = fileio.FileStream(b'\x00' * 0x20)
 
         self.X                  = fs.ReadULong()
         self.Z                  = fs.ReadULong()
@@ -46,7 +135,7 @@ class ScenarioNpcInfo:
 
     def params(self):
         align = 20
-        p = [
+        return [
             '%s %d,'   % (alignFormatKw(align, 'X'),                  LONG(self.X).value),
             '%s %d,'   % (alignFormatKw(align, 'Z'),                  LONG(self.Z).value),
             '%s %d,'   % (alignFormatKw(align, 'Y'),                  LONG(self.Y).value),
@@ -60,8 +149,6 @@ class ScenarioNpcInfo:
             '%s %s,'   % (alignFormatKw(align, 'TalkFunctionIndex'),  SHORT(self.TalkFunctionIndex).value),
             '%s %s,'   % (alignFormatKw(align, 'TalkScenaIndex'),     SHORT(self.TalkScenaIndex).value),
         ]
-
-        return p
 
     def binary(self):
         return struct.pack('<LLLHHLHHHHHH',
@@ -81,10 +168,9 @@ class ScenarioNpcInfo:
 
 class ScenarioMonsterInfo:
     def __init__(self, fs = None):
-        if fs == None:
-            return
-
         # size = 0x1C
+        if fs is None:
+            fs = fileio.FileStream(b'\x00' * 0x1C)
 
         self.X                      = fs.ReadLong()
         self.Z                      = fs.ReadLong()
@@ -133,11 +219,11 @@ class ScenarioMonsterInfo:
                 )
 
 class ScenarioEventInfo:
-    # 0x20 bytes
-
     def __init__(self, fs = None):
-        if fs == None:
-            return
+        # size = 0x20
+
+        if fs is None:
+            fs = fileio.FileStream(b'\x00' * 0x20)
 
         self.X              = fs.ReadLong()
         self.Y              = fs.ReadLong()
@@ -178,10 +264,9 @@ class ScenarioEventInfo:
 
 class ScenarioActorInfo:
     def __init__(self, fs = None):
-        if fs == None:
-            return
-
         # size = 0x24
+        if fs is None:
+            fs = fileio.FileStream(b'\x00' * 0x24)
 
         self.TriggerX           = fs.ReadULong()
         self.TriggerZ           = fs.ReadULong()
@@ -251,132 +336,6 @@ class ScenarioActorInfo:
                     USHORT(self.Unknown_22).value
                 )
 
-class ScenarioPlaceNameInfo:
-
-    # size = 0x14
-
-    def __init__(self, fs = None):
-        if fs == None:
-            return
-
-        self.X          = fs.ReadFloat()
-        self.Z          = fs.ReadFloat()
-        self.Y          = fs.ReadFloat()
-        self.Flags1     = fs.ReadUShort()
-        self.Flags2     = fs.ReadUShort()
-        self.NameOffset = fs.ReadULong()
-
-        pos = fs.tell()
-        fs.seek(self.NameOffset)
-
-        self.Name = fs.ReadMultiByte(CODE_PAGE)
-
-        fs.seek(pos)
-
-    def param(self):
-        return '%s, %s, %s, 0x%04X, 0x%04X, "%s"' % (self.X, self.Z, self.Y, self.Flags1, self.Flags2, self.Name)
-
-    def binary(self):
-        return struct.pack('<fffHHL', self.X, self.Z, self.Y, self.Flags1, self.Flags2, self.NameOffset)
-
-
-class ScenarioInitData:
-
-    # size = 0x40
-
-    def __init__(self, fs = None):
-        self.PackFormat = '<iiiiiiiiHHHHiiiHHHHBBBB'
-
-        if fs == None:
-            return
-
-        if IsTupleOrList(fs):
-            return self.__init__(fileio.FileStream(struct.pack(self.PackFormat, *fs)))
-
-        self.Unknown_00             = fs.ReadLong()    # 0x00
-        self.Unknown_04             = fs.ReadLong()    # 0x04
-        self.Unknown_08             = fs.ReadLong()    # 0x08
-        self.Unknown_0C             = fs.ReadLong()    # 0x0C
-        self.Unknown_10             = fs.ReadLong()    # 0x10
-        self.Unknown_14             = fs.ReadLong()    # 0x14
-        self.Unknown_18             = fs.ReadLong()    # 0x18
-        self.Unknown_1C             = fs.ReadLong()    # 0x1C
-        self.Unknown_20             = fs.ReadUShort()   # 0x20
-        self.Unknown_22             = fs.ReadUShort()   # 0x22
-        self.Unknown_24             = fs.ReadUShort()   # 0x24
-        self.Unknown_26             = fs.ReadUShort()   # 0x26
-        self.Unknown_28             = fs.ReadLong()    # 0x28
-        self.Unknown_2C             = fs.ReadLong()    # 0x2C
-        self.Unknown_30             = fs.ReadLong()    # 0x30
-        self.Unknown_34             = fs.ReadUShort()   # 0x34
-        self.Unknown_36             = fs.ReadUShort()   # 0x36
-        self.Flags                  = fs.ReadUShort()   # 0x38
-        self.Unknown_3A             = fs.ReadUShort()   # 0x3A
-
-        self.InitScenaIndex         = fs.ReadByte()     # 0x3C
-        self.InitFunctionIndex      = fs.ReadByte()     # 0x3D
-        self.EntryScenaIndex        = fs.ReadByte()     # 0x3E
-        self.EntryFunctionIndex     = fs.ReadByte()     # 0x3F
-
-    def param(self):
-        p = ('%d, ' * 23) % (
-                self.Unknown_00,
-                self.Unknown_04,
-                self.Unknown_08,
-                self.Unknown_0C,
-                self.Unknown_10,
-                self.Unknown_14,
-                self.Unknown_18,
-                self.Unknown_1C,
-                self.Unknown_20,
-                self.Unknown_22,
-                self.Unknown_24,
-                self.Unknown_26,
-                self.Unknown_28,
-                self.Unknown_2C,
-                self.Unknown_30,
-                self.Unknown_34,
-                self.Unknown_36,
-                self.Flags,
-                self.Unknown_3A,
-                self.InitScenaIndex,
-                self.InitFunctionIndex,
-                self.EntryScenaIndex,
-                self.EntryFunctionIndex,
-            )
-
-        return p[:-2]
-
-    def binary(self):
-        bin = struct.pack(self.PackFormat,
-                self.Unknown_00,
-                self.Unknown_04,
-                self.Unknown_08,
-                self.Unknown_0C,
-                self.Unknown_10,
-                self.Unknown_14,
-                self.Unknown_18,
-                self.Unknown_1C,
-                self.Unknown_20,
-                self.Unknown_22,
-                self.Unknown_24,
-                self.Unknown_26,
-                self.Unknown_28,
-                self.Unknown_2C,
-                self.Unknown_30,
-                self.Unknown_34,
-                self.Unknown_36,
-                self.Flags,
-                self.Unknown_3A,
-                self.InitScenaIndex,
-                self.InitFunctionIndex,
-                self.EntryScenaIndex,
-                self.EntryFunctionIndex
-            )
-
-        return bin
-
-
 class ScenarioInfo:
     def __init__(self):
         # file header
@@ -441,11 +400,12 @@ class ScenarioInfo:
         return buffer.Read()
 
     def open(self, scenafile):
-
         fs = fileio.FileStream(scenafile)
-
         if fs.Length == 0:
             return False
+
+        self.scenaName = os.path.splitext(os.path.basename(scenafile))[0].strip()
+        self.scenaTextIndex = 1
 
         # file header
 
@@ -463,6 +423,8 @@ class ScenarioInfo:
         self.ScenaFunctionTable = ScenarioEntry(fs.ReadUShort(), fs.ReadUShort())
 
         self.IncludedScenario.index(0xFFFFFFFF)
+
+        self.EntryPoint = [ScenarioEntryPoint(fs) for i in range((self.ScnInfoOffset[0].Offset - fs.Position) // 0x44)]
 
         # file header end
 
@@ -528,11 +490,67 @@ class ScenarioInfo:
 
         self.StringTable = buf.decode(CODE_PAGE).rstrip('\x00').split('\x00')
 
+        if ExtractText:
+            textPosTable[self.scenaName] = [self.StringTable]
+        else:
+            try:
+                strtbl = textPosTable[self.scenaName][0]
+                if len(strtbl) != len(self.StringTable):
+                    raise Exception('%s\n\n%s' % (strtbl, self.StringTable))
+                self.StringTable = strtbl
+            except KeyError:
+                pass
+
     def DiasmInstructionCallback(self, data):
         if data.Reason != HANDLER_REASON_DISASM:
             return
 
         inst, fs = data.Instruction, data.FileStream
+
+        if ExtractText:
+            if inst.OpCode == ed6fc.ChrTalk:
+                text = inst.Operand[1]
+                textPosTable[self.scenaName].append([s.dump() for s in text])
+
+            elif inst.OpCode == ed6fc.AnonymousTalk:
+                text = inst.Operand[0]
+                textPosTable[self.scenaName].append([s.dump() for s in text])
+
+            elif inst.OpCode == ed6fc.NpcTalk:
+                for text in inst.Operand[1:]:
+                    textPosTable[self.scenaName].append([s.dump() for s in text])
+
+            elif inst.OpCode in [ed6fc.Menu, ed6fc.SetChrName]:
+                text = inst.Operand[-1]
+                textPosTable[self.scenaName].append([s.dump() for s in text])
+
+        else:
+            try:
+                cntext = textPosTable[self.scenaName]
+            except KeyError:
+                return
+
+            if inst.OpCode == ed6fc.ChrTalk:
+                inst.Operand[1] = self.loadScpStringList(cntext[self.scenaTextIndex])
+
+            elif inst.OpCode == ed6fc.AnonymousTalk:
+                inst.Operand[0] = self.loadScpStringList(cntext[self.scenaTextIndex])
+
+            elif inst.OpCode == ed6fc.NpcTalk:
+                inst.Operand[1] = self.loadScpStringList(cntext[self.scenaTextIndex])
+                inst.Operand[2] = self.loadScpStringList(cntext[self.scenaTextIndex + 1])
+                self.scenaTextIndex += 1
+
+            elif inst.OpCode in [ed6fc.Menu, ed6fc.SetChrName]:
+                inst.Operand[-1] = self.loadScpStringList(cntext[self.scenaTextIndex])
+
+            else:
+                return
+
+            self.scenaTextIndex += 1
+
+    def loadScpStringList(self, paramList):
+        return [ed6fc.ScpString(**p) for p in paramList]
 
     def DisassembleBlocks(self, fs):
         disasm = Disassembler(ed6fc.ed6fc_op_table, self.DiasmInstructionCallback)
@@ -572,11 +590,10 @@ class ScenarioInfo:
 
         return l
 
-    def FormatInstructionCallback(self, data):
+    def FormatInstructionCallback(self, data, text):
         pass
 
     def FormatCodeBlocks(self):
-
         ed6fc.ed6fc_op_table.FunctionLabelList = self.GenerateFunctionLabelList(self.CodeBlocks)
         disasm = Disassembler(ed6fc.ed6fc_op_table, self.FormatInstructionCallback)
 
@@ -609,7 +626,7 @@ class ScenarioInfo:
         if len(self.StringTable) == 0:
             return lines
 
-        index = 0
+        index = 8
         lines.append('BuildStringList(')
         for string in self.StringTable:
             lines.append('    %s# %d' % (alignFormatArg(40, '%s' % repr(string)), index))
@@ -651,7 +668,25 @@ class ScenarioInfo:
         hdr.append('')
 
         hdr += self.GenerateStringList()
-        # hdr += self.GenerateBattleInfo()
+
+        def AppendScpInfo(info, func):
+            if len(info) == 0:
+                return
+
+            for i in info:
+                if hasattr(i, 'params'):
+                    params = i.params()
+                    hdr.append('%s(' % func)
+                    hdr.extend(['    ' + p for p in params])
+                    hdr.append(')')
+                else:
+                    hdr.append('%s(%s)' % (func, i.param()))
+
+                hdr.append('')
+
+            hdr.append('')
+
+        AppendScpInfo(self.EntryPoint, 'DeclEntryPoint')
 
         if len(self.ScnInfo[SCN_INFO_CHIP]) != 0:
             hdr.append('AddCharChip(')
@@ -677,23 +712,6 @@ class ScenarioInfo:
                 index += 1
 
             hdr.append(')')
-            hdr.append('')
-
-        def AppendScpInfo(info, func):
-            if len(info) == 0:
-                return
-
-            for i in info:
-                if hasattr(i, 'params'):
-                    params = i.params()
-                    hdr.append('%s(' % func)
-                    hdr.extend(['    ' + p for p in params])
-                    hdr.append(')')
-                else:
-                    hdr.append('%s(%s)' % (func, i.param()))
-
-                hdr.append('')
-
             hdr.append('')
 
         AppendScpInfo(self.ScnInfo[SCN_INFO_NPC],       'DeclNpc')
@@ -742,14 +760,14 @@ class ScenarioInfo:
         lines.append('Try(main)')
         lines.append('')
 
-        filename = '%s.%s' % (basename, ext)
+        filename = '%s%s' % (basename, ext)
 
         if append_place_name:
             debugmap = ['a0000', 'map1', 'a0002']
             if self.MapName.lower() not in debugmap:
                 mapname = self.GetMapNameByIndex(self.MapIndex)
                 if mapname != '':
-                    filename = '%s.%s.%s' % (basename, mapname, ext)
+                    filename = '%s.%s%s' % (basename, mapname, ext)
 
         fs = open(filename, 'wb')
         fs.write(''.encode('utf_8_sig'))
@@ -829,9 +847,19 @@ def procfile(file):
         scena.SaveToFile(os.path.splitext(file)[0] + '.py')
 
 def main():
+    global textPosTable
+
+    os.chdir(os.path.dirname(__file__))
+
+    if not ExtractText:
+        textPosTable = json.load(open('text_pos_final.json', 'r', encoding = 'utf-8-sig'))
+
     if len(sys.argv) == 1:
         sys.argv.append(r"T0001   ._SN")
     iterlib.forEachFile(procfile, sys.argv[1:], '*._SN')
+
+    if ExtractText:
+        open('text_pos.json', 'wb').write(json.dumps(textPosTable, indent = 2, ensure_ascii = False).encode('utf_8_sig'))
 
 if __name__ == '__main__':
     Try(main)

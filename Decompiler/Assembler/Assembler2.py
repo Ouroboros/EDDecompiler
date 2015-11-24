@@ -298,7 +298,7 @@ class Disassembler:
             text = self.DefaultFormatInstruction(data)
 
         if self.HandleInstructionCallback:
-            symbol = self.HandleInstructionCallback(data)
+            symbol = self.HandleInstructionCallback(data, text)
             text = symbol if symbol else text
 
         return text
@@ -354,7 +354,6 @@ class Disassembler:
 
 
         for inst in block.Instructions:
-
             if inst.Offset != block.Offset and inst.Offset in FormattedBlock:
                 continue
 
