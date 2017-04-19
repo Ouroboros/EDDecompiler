@@ -24,7 +24,7 @@ class ScenarioInfoPort(ScenarioInfo):
 
         self.ScpFunctionList    = []
 
-scena = ScenarioInfoPort()
+scena = None
 
 def CreateScenaFile(
         FileName,
@@ -37,6 +37,10 @@ def CreateScenaFile(
         Reserved,
         IncludedScenario,
     ):
+
+    global scena
+
+    scena = ScenarioInfoPort()
 
     scena.MapName               = MapName
     scena.Location              = Location
@@ -57,7 +61,7 @@ def CreateScenaFile(
     scena.fs = fileio.FileStream(FileName, 'wb+')
     scena.fs.seek(0x64)
 
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(-1)
 
 def BuildStringList(*strlist):
     scena.StringTable = list(strlist)
@@ -100,6 +104,8 @@ def AddCharChip(*chips):
 
     scena.fs.WriteByte(0xFF)
 
+    updateScnInfoOffset(SCN_INFO_CHIP_PAT)
+
 def AddCharChipPat(*pats):
     scena.ScnInfoOffset[SCN_INFO_CHIP_PAT] = scena.fs.tell()
     scena.ScnInfoNumber[SCN_INFO_CHIP_PAT] = len(pats)
@@ -112,6 +118,8 @@ def AddCharChipPat(*pats):
 
     scena.fs.WriteByte(0xFF)
 
+    updateScnInfoOffset(SCN_INFO_CHIP_PAT)
+
 def declImpl(type, kwargs):
     obj = type()
 
@@ -121,29 +129,34 @@ def declImpl(type, kwargs):
 
     scena.fs.write(obj.binary())
 
+def updateScnInfoOffset(current):
+    scena.HeaderEndOffset = scena.fs.tell()
+    for i in range(current + 1, SCN_INFO_MAXIMUM):
+        scena.ScnInfoOffset[i] = scena.HeaderEndOffset
+
 def DeclEntryPoint(**kwargs):
     declImpl(ScenarioEntryPoint, kwargs)
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(-1)
 
 def DeclNpc(**kwargs):
     AddScnInfo(SCN_INFO_NPC)
     declImpl(ScenarioNpcInfo, kwargs)
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(SCN_INFO_NPC)
 
 def DeclMonster(**kwargs):
     AddScnInfo(SCN_INFO_MONSTER)
     declImpl(ScenarioMonsterInfo, kwargs)
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(SCN_INFO_MONSTER)
 
 def DeclEvent(**kwargs):
     AddScnInfo(SCN_INFO_EVENT)
     declImpl(ScenarioEventInfo, kwargs)
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(SCN_INFO_EVENT)
 
 def DeclActor(**kwargs):
     AddScnInfo(SCN_INFO_ACTOR)
     declImpl(ScenarioActorInfo, kwargs)
-    scena.HeaderEndOffset = scena.fs.tell()
+    updateScnInfoOffset(SCN_INFO_ACTOR)
 
 def ScpFunction(*FunctionList):
     scena.ScenaFunctionTable.Offset = scena.fs.tell()
@@ -276,6 +289,8 @@ def SaveToFile():
 
     fs.seek(0)
     fs.write(scena.binary())
+
+    fs.close()
 
     print('done')
 

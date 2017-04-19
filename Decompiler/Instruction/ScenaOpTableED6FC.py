@@ -31,7 +31,7 @@ InstructionNames[0x0F]  = 'Battle'
 InstructionNames[0x10]  = 'OP_10'
 InstructionNames[0x11]  = 'OP_11'
 InstructionNames[0x12]  = 'StopSound'
-InstructionNames[0x13]  = 'OP_13'
+InstructionNames[0x13]  = 'SetPlaceName'
 InstructionNames[0x14]  = 'BlurSwitch'
 InstructionNames[0x15]  = 'OP_15'
 InstructionNames[0x16]  = 'OP_16'
@@ -200,7 +200,7 @@ InstructionNames[0xB8]  = 'OP_B8'
 InstructionNames[0xB9]  = 'OP_B9'
 InstructionNames[0xBA]  = 'OP_BA'
 InstructionNames[0xBB]  = 'OP_BB'
-InstructionNames[0xDE]  = 'OP_DE'
+InstructionNames[0xDE]  = 'SaveClearData'
 
 
 for op, name in InstructionNames.items():
@@ -1319,7 +1319,7 @@ ed6fc_op_list = \
     inst(OP_10,                     'BB'),
     inst(OP_11,                     'BBBLLL'),
     inst(StopSound,                 'LLL'),
-    inst(OP_13,                     'W'),   # poswnd
+    inst(SetPlaceName,              'W'),
     inst(BlurSwitch),
     inst(OP_15),
     inst(OP_16,                     NO_OPERAND,             0,                          scp_16),
@@ -1411,7 +1411,7 @@ ed6fc_op_list = \
     inst(OP_6C,                     'ii'),
     inst(OP_6D,                     'iiii'),
     inst(OP_6E,                     'ii'),
-    inst(OP_6F,                     'WL'),
+    inst(OP_6F,                     'Wi'),
     inst(OP_70,                     'WL'),
     inst(OP_71,                     'WW'),
     inst(OP_72,                     'WW'),
@@ -1488,7 +1488,7 @@ ed6fc_op_list = \
     inst(OP_B9,                     'WW'),
     inst(OP_BA,                     'BW'),
     inst(OP_BB,                     'BB'),
-    inst(OP_DE),
+    inst(SaveClearData),
 ]
 
 del inst
