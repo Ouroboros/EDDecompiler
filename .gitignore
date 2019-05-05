@@ -2,3 +2,4 @@
 *.lnk
 *.bmp
 */.vscode/.ropeproject
+/Decompiler2/.idea

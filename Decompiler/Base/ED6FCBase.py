@@ -2,7 +2,7 @@ from Base.BaseType import *
 
 CODE_PAGE = 'GBK'
 
-GAME_PATH = r'D:\Game\Steam\steamapps\common\Trails in the Sky FC'
+GAME_PATH = r'E:\Game\Steam\steamapps\common\Trails in the Sky FC'
 
 SEPITH_CHI  = 0
 SEPITH_MIZU = 1

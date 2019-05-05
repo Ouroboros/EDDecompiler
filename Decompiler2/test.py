@@ -1,31 +1,29 @@
 from ml import *
 import Assembler
 
+from Falcom import ED6FC
+
+def test():
+    print(ED6FC.ScenaOpTable)
+    print()
+
+    dis = Assembler.Disassembler(ED6FC.ScenaOpTable)
+
+    fs = fileio.FileStream()
+    fs.OpenMemory(open('tests\\T2610_1 ._SN', 'rb').read())
+
+    fs.Position = 0x64
+
+    info = Assembler.DisassembleInfo(fs)
+
+    fun = dis.disasmFunction(info)
+
+    fun.name = 'test'
+
+    print('\n'.join(dis.formatFuncion(fun)))
+
 def main():
-    OperandDescriptor = Assembler.OperandDescriptor
-
-    desc = Assembler.InstructionDescriptor(0x05, 'Call', (OperandDescriptor.UInt8, OperandDescriptor.UInt8))
-    desc.operands[0]
-
-    print(desc)
-
-    opr = Assembler.Operand()
-
-    print(opr.descriptor.encoding)
-
-    f = Assembler.Flags.StartBlock | Assembler.Flags.EndBlock
-    print(f)
-
-    inst = Assembler.Instruction()
-    blk = Assembler.CodeBlock(None)
-    tbl = Assembler.InstructionTable(None)
-
-    blk.instructions[0]
-    inst.branches[0]
-    tbl.decriptors[0]
-
-    print(f.isStartBlock)
-    print(f.isEndBlock)
+    test()
 
     console.pause('done')
 
